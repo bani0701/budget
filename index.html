@@ -101,13 +101,17 @@
   .invite .t{font-size:12px;font-weight:700;opacity:.9}
   .invite .n{font-size:19px;font-weight:800;margin-top:4px}
   .sheet-scroll{max-height:82vh;overflow-y:auto}
-  .vtabs{display:flex;gap:5px;margin-top:9px;background:#f4f5f6;padding:4px;border-radius:14px}
+  .vtabs{display:flex;gap:0;margin:11px -16px -10px;padding:0 10px;background:#fff}
   .vtab{
-    flex:1;height:38px;border-radius:10px;font-size:12.5px;font-weight:800;color:var(--sub);
-    display:flex;align-items:center;justify-content:center;gap:4px;letter-spacing:-.5px;transition:.15s;
+    flex:1;height:44px;border-radius:0;background:transparent;position:relative;
+    font-size:15px;font-weight:700;color:#b7bbc4;letter-spacing:-.4px;
+    display:flex;align-items:center;justify-content:center;transition:color .15s;
   }
-  .vtab .ve{font-size:14px;line-height:1}
-  .vtab.on{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(20,22,28,.10)}
+  .vtab.on{color:var(--ink);font-weight:800}
+  .vtab.on::after{
+    content:"";position:absolute;left:14%;right:14%;bottom:0;height:3px;
+    border-radius:3px 3px 0 0;background:var(--primary);
+  }
   .view{display:flex;flex-direction:column;gap:14px}
 
   .months{display:flex;gap:7px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:none}
@@ -247,9 +251,38 @@
   }
   .emo-pick button.on{border-color:var(--primary);background:var(--primary-soft)}
 
-  .amt-row{display:flex;align-items:center;gap:8px;margin-top:14px;background:#f7f8f9;border-radius:14px;padding:0 14px;height:54px;border:1.5px solid var(--line)}
-  .amt-row input{flex:1;border:none;background:none;outline:none;font-size:20px;font-weight:800;text-align:right;letter-spacing:-.5px;min-width:0}
-  .amt-row .won{font-size:15px;font-weight:800;color:var(--sub)}
+  /* 영수증 인식 */
+  .ico-group{display:flex;align-items:center;gap:0;margin-left:5px}
+  .ico{
+    width:32px;height:32px;border-radius:9px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;color:#5b616e;background:transparent;
+  }
+  .ico:active{background:#eceef1}
+  .ico svg{width:22px;height:22px;display:block}
+  .scan-box{background:#f7f8f9;border:1.5px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:12px}
+  .scan-box.good{background:#eafaf3;border-color:#bfe9d8}
+  .scan-box.bad{background:#fff0f0;border-color:#ffd5d5}
+  .scan-head{display:flex;align-items:flex-start;gap:9px;justify-content:space-between}
+  .scan-head span{flex:1;min-width:0;font-size:12.5px;font-weight:700;line-height:1.45}
+  .scan-box.good .scan-head span{color:#1d8c67}
+  .scan-box.bad .scan-head span{color:#c93b3b}
+  .scan-x{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.07);font-size:11px;font-weight:800;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .scan-box .gbar{margin-top:9px}
+  .scan-box summary{font-size:11.5px;font-weight:800;color:var(--sub);cursor:pointer;margin-top:9px}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .fl{font-size:11.5px;font-weight:800;color:var(--sub);margin-left:3px;white-space:nowrap}
+  .fld > input[type="date"]{
+    height:54px;border-radius:14px;border:1.5px solid var(--line);background:#f7f8f9;
+    padding:0 11px;outline:none;font-size:15px;font-weight:800;min-width:0;width:100%;
+    color:var(--ink);-webkit-appearance:none;appearance:none;
+  }
+  .fld > input[type="date"]:focus{border-color:var(--primary);background:#fff}
+  .amt-row{display:flex;align-items:center;gap:6px;background:#f7f8f9;border-radius:14px;padding:0 13px;height:54px;border:1.5px solid var(--line);min-width:0}
+  .amt-row:focus-within{border-color:var(--primary);background:#fff}
+  .amt-row input{flex:1;border:none;background:none;outline:none;font-size:19px;font-weight:800;text-align:right;letter-spacing:-.5px;min-width:0}
+  .amt-row .won{font-size:14px;font-weight:800;color:var(--sub);flex:0 0 auto}
   .amt-row .tag{font-size:12px;font-weight:800;color:var(--sub);white-space:nowrap}
   .quick{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
   .q{flex:1;min-width:58px;height:34px;border-radius:10px;background:#f4f5f6;font-size:12px;font-weight:700;color:var(--sub)}
@@ -370,9 +403,9 @@
       </div>
       <div class="months" id="months"></div>
       <div class="vtabs">
-        <button class="vtab on" data-view="month"><span class="ve">💳</span>이번 달</button>
-        <button class="vtab" data-view="save"><span class="ve">🐷</span>모은 돈</button>
-        <button class="vtab" data-view="stats"><span class="ve">📊</span>한눈에</button>
+        <button class="vtab on" data-view="month">이번 달</button>
+        <button class="vtab" data-view="save">모은 돈</button>
+        <button class="vtab" data-view="stats">한눈에</button>
       </div>
     </div>
 
@@ -438,16 +471,45 @@
       <div class="view v-month">
       <!-- 입력 -->
       <div class="card">
-        <div class="card-h"><div class="card-t">내역 입력</div><div style="display:flex;align-items:center;gap:8px"><span class="muted" id="inMonth">10월</span><button class="mini" id="editCatsBtn">카테고리 편집</button></div></div>
+        <div class="card-h">
+          <div class="card-t">내역 입력
+            <span class="ico-group"><button class="ico" id="scanCam" aria-label="영수증 찍기" title="영수증 찍기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2a1 1 0 0 0 .83-.45l.94-1.4A1 1 0 0 1 9.3 4.7h5.4a1 1 0 0 1 .83.45l.94 1.4A1 1 0 0 0 17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.8" r="3.3"/></svg></button>
+            <button class="ico" id="scanPic" aria-label="사진 첨부" title="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="4.8" width="17.6" height="14.4" rx="2.4"/><circle cx="8.6" cy="9.8" r="1.5"/><path d="M4 16.6l4.3-4a1.6 1.6 0 0 1 2.2 0l3.2 3 1.6-1.5a1.6 1.6 0 0 1 2.2 0L20.6 16"/></svg></button></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="muted" id="inMonth">10월</span><button class="mini" id="editCatsBtn">카테고리 편집</button></div>
+        </div>
+        <input type="file" id="camIn" accept="image/*" capture="environment" class="hidden">
+        <input type="file" id="picIn" accept="image/*" class="hidden">
+
+        <div class="scan-box hidden" id="scanBox">
+          <div class="scan-head">
+            <span id="scanMsg">사진 읽는 중…</span>
+            <button class="scan-x" id="scanClose">✕</button>
+          </div>
+          <div class="gbar" id="scanBarWrap"><i id="scanBar" style="width:8%"></i></div>
+          <details class="hidden" id="scanWhy">
+            <summary>왜 안 읽혔는지 보기</summary>
+            <div class="code" id="scanRaw" style="margin-top:8px;max-height:170px;overflow:auto;white-space:pre-wrap"></div>
+          </details>
+        </div>
+
         <div class="tabs">
           <button class="tab on out" data-tab="expense" id="tabOut">지출</button>
           <button class="tab inc" data-tab="income" id="tabIn">입금</button>
         </div>
         <div class="cats" id="cats"></div>
-        <div class="amt-row">
-          <span class="tag" id="amtTag">지출 금액</span>
-          <input id="amtIn" inputmode="numeric" placeholder="0">
-          <span class="won">원</span>
+        <div class="row2">
+          <div class="fld">
+            <span class="fl">날짜</span>
+            <input type="date" id="dateIn">
+          </div>
+          <div class="fld">
+            <span class="fl" id="amtTag">지출 금액</span>
+            <div class="amt-row">
+              <input id="amtIn" inputmode="numeric" placeholder="0">
+              <span class="won">원</span>
+            </div>
+          </div>
         </div>
         <div class="quick">
           <button class="q" data-add="1000">+1천</button>
@@ -522,6 +584,14 @@
       <div id="shareOff">
         <div class="note">공유를 켜려면 데이터를 담아둘 무료 저장소(Firebase)를 한 번만 연결하면 돼요. 5분이면 끝나고, 이후엔 링크만 보내면 됩니다.</div>
         <div class="srow"><button class="sbtn main" id="fbOpen">🚀 1단계 · 저장소 연결하기</button></div>
+
+        <div class="note" style="background:#f4f5f6;color:var(--sub);margin-top:14px">
+          이미 쓰던 가계부가 있나요? 다른 기기·브라우저에서 받은 <b style="color:var(--ink)">초대 링크를 붙여넣으면</b> 그 가계부를 그대로 이어서 볼 수 있어요.
+        </div>
+        <div class="share-link">
+          <input id="joinIn" placeholder="초대 링크 붙여넣기" autocomplete="off">
+          <button id="joinBtn">불러오기</button>
+        </div>
       </div>
 
       <div id="shareOn" class="hidden">
@@ -837,7 +907,7 @@ document.getElementById('loadBtn').onclick = function(){
 function openMain(){
   document.getElementById('gate').classList.add('hidden');
   document.getElementById('main').classList.remove('hidden');
-  buildCats(); render();
+  buildCats(); render(); syncDateIn();
   if(store.share && store.share.url && store.share.id) startSync(); else paintStatus();
   window.scrollTo(0,0);
 }
@@ -852,7 +922,7 @@ function buildMonths(){
       var b = document.createElement('button');
       b.className = 'm-chip' + (m===ui.month?' on':'');
       b.innerHTML = '<span>'+m+'월</span><span class="m-dot'+(has?'':' off')+'"></span>';
-      b.onclick = function(){ ui.month = m; render(); window.scrollTo({top:0,behavior:'smooth'}); };
+      b.onclick = function(){ ui.month = m; render(); syncDateIn(); window.scrollTo({top:0,behavior:'smooth'}); };
       box.appendChild(b);
     })(m);
   }
@@ -921,6 +991,36 @@ function openCatAdd(){
   document.getElementById('catBg').classList.remove('hidden');
   document.getElementById('catName').focus();
 }
+function pad2(n){ return ('0'+n).slice(-2); }
+function dateStr(y,m,d){ return y + '-' + pad2(m) + '-' + pad2(d); }
+function daysIn(y,m){ return new Date(y, m, 0).getDate(); }
+
+/* 선택한 달에 맞춰 날짜 칸을 채움 (오늘이 그 달이면 오늘로) */
+function syncDateIn(keepDay){
+  var el = document.getElementById('dateIn');
+  if(!el) return;
+  var now = new Date();
+  var d;
+  if(keepDay){
+    d = Math.min(keepDay, daysIn(store.year, ui.month));
+  }else if(store.year === now.getFullYear() && ui.month === now.getMonth()+1){
+    d = now.getDate();
+  }else{
+    d = 1;
+  }
+  el.value = dateStr(store.year, ui.month, d);
+  el.min = dateStr(store.year, 1, 1);
+  el.max = dateStr(store.year, 12, 31);
+}
+function readDateIn(){
+  var v = String((document.getElementById('dateIn') || {}).value || '');
+  var m = v.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return null;
+  var y = +m[1], mo = +m[2], d = +m[3];
+  if(mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  return { y:y, m:mo, d:d };
+}
+
 function syncAdd(){
   var btn = document.getElementById('addBtn');
   var amt = parseInt(document.getElementById('amtIn').value.replace(/[^0-9]/g,''),10) || 0;
@@ -963,6 +1063,321 @@ document.getElementById('catSaveBtn').onclick = function(){
   catBg.classList.add('hidden');
   toast((ui.newEmo||'🏷️') + ' ' + n + ' 카테고리를 추가했어요');
 };
+
+/* ================= 영수증 인식 ================= */
+var TESS_URL = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+var ocr = { img:'', busy:false, cat:null, worker:null, cancel:false };
+
+function digitsOf(s){
+  var v = String(s).replace(/[^0-9]/g, '');
+  return v ? parseInt(v, 10) : 0;
+}
+
+/* 영수증 텍스트에서 날짜·금액·가맹점 뽑기 */
+function parseReceipt(raw){
+  var text = String(raw || '').replace(/\r/g, '');
+  var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  var flat = lines.join('\n');
+  var out = { date:null, amount:0, memo:'', cat:null };
+
+  /* --- 날짜 --- */
+  var now = new Date();
+  var m;
+  var pats = [
+    /(20\d{2})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/,
+    /(\d{2})\s*[.\-\/]\s*(\d{1,2})\s*[.\-\/]\s*(\d{1,2})(?!\d)/,
+    /(\d{1,2})\s*월\s*(\d{1,2})\s*일/,
+    /(?:^|[^\d.])(\d{1,2})\s*[.\/]\s*(\d{1,2})\s*(?:\(|[월화수목금토일]|$|[^\d])/m
+  ];
+  for(var p=0;p<pats.length;p++){
+    m = flat.match(pats[p]);
+    if(!m) continue;
+    var y, mo, dd;
+    if(p === 0){ y = +m[1]; mo = +m[2]; dd = +m[3]; }
+    else if(p === 1){ y = 2000 + (+m[1]); mo = +m[2]; dd = +m[3]; }
+    else { y = now.getFullYear(); mo = +m[1]; dd = +m[2]; }
+    if(mo >= 1 && mo <= 12 && dd >= 1 && dd <= 31 && y >= 2000 && y <= 2100){
+      out.date = { y:y, m:mo, d:dd };
+      break;
+    }
+  }
+
+  /* --- 금액 --- */
+  var STRONG = ['합계','합 계','총액','총 액','결제금액','승인금액','결제 금액','받을금액','총결제','총 결제',
+                '판매총액','총구매액','카드금액','청구금액','주문금액','총주문','결제예정','실결제','최종결제',
+                '결제완료','총 주문','받은금액제외'];
+  var SKIP   = ['부가','과세','면세','공급가','할인','포인트','적립','거스름','잔액','현금영수','잔돈','봉사료',
+                '쿠폰','마일리지','배송비','상품금액','정상가','정가','할부','잔여'];
+  var best = 0, strongHit = 0;
+
+  function numsIn(line){
+    var found = [], re = /\d[\d,\.]{1,12}/g, mm;
+    while((mm = re.exec(line))){
+      var v = digitsOf(mm[0]);
+      if(v >= 100 && v <= 50000000) found.push(v);
+    }
+    return found;
+  }
+
+  for(var i=0;i<lines.length;i++){
+    var L = lines[i], low = L.replace(/\s+/g, '');
+    var skip = SKIP.some(function(k){ return low.indexOf(k) >= 0; });
+    if(skip) continue;
+    var isStrong = STRONG.some(function(k){ return low.indexOf(k.replace(/\s+/g,'')) >= 0; });
+    var ns = numsIn(L);
+    if(!ns.length && isStrong && lines[i+1]) ns = numsIn(lines[i+1]);
+    if(!ns.length) continue;
+    var mx = Math.max.apply(null, ns);
+    if(isStrong){ if(mx > strongHit) strongHit = mx; }
+    else if(mx > best) best = mx;
+  }
+  out.amount = strongHit || best || 0;
+
+  /* --- 가맹점 / 상품명 (상단에서 글자 가장 많은 줄) --- */
+  var BAD = /영수증|사업자|대표자|주소|전화|tel|사업장|승인|카드|거래|일시|번호|구매|주문|매출|과세|합계|금액|배송|도착|완료|조회|문의|반품|교환|확정|판매자|정보|결제|택배|상세|내역/;
+  var bestLine = '', bestLen = 0;
+  for(var k=0;k<Math.min(lines.length, 14);k++){
+    var s = lines[k];
+    var letters = (s.match(/[가-힣A-Za-z]/g) || []).length;
+    var digits = (s.match(/\d/g) || []).length;
+    if(BAD.test(s) || letters < 2 || digits > letters) continue;
+    if(letters > bestLen){ bestLen = letters; bestLine = s; }
+  }
+  out.memo = bestLine.replace(/[^가-힣A-Za-z0-9 &.\-()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 24);
+
+  out.cat = null;   // 카테고리는 사용자가 직접 선택
+  return out;
+}
+
+/* 인식용 이미지 준비: 글자가 또렷해지도록 크기를 맞추고 흑백 대비를 올림 */
+function shrinkImage(file, target){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onerror = function(){ rej(new Error('read')); };
+    fr.onload = function(){
+      var im = new Image();
+      im.onerror = function(){ rej(new Error('image')); };
+      im.onload = function(){
+        var w = im.naturalWidth, h = im.naturalHeight;
+        if(!w || !h){ rej(new Error('image')); return; }
+        var T = target || 2000;
+        // 작은 캡처는 키우고, 너무 큰 사진은 줄여서 글자 크기를 비슷하게 맞춤
+        var sc = T / Math.max(w, h);
+        sc = Math.max(0.35, Math.min(3, sc));
+        var cw = Math.max(1, Math.round(w * sc)), ch = Math.max(1, Math.round(h * sc));
+        // 모바일 메모리 보호
+        while(cw * ch > 9000000){ cw = Math.round(cw * 0.85); ch = Math.round(ch * 0.85); }
+        var cv = document.createElement('canvas');
+        cv.width = cw; cv.height = ch;
+        var cx = cv.getContext('2d');
+        cx.imageSmoothingEnabled = true;
+        if('imageSmoothingQuality' in cx) cx.imageSmoothingQuality = 'high';
+        cx.fillStyle = '#fff'; cx.fillRect(0, 0, cw, ch);
+        cx.drawImage(im, 0, 0, cw, ch);
+        // 흑백 + 대비 보정 (글자와 배경을 갈라줌)
+        try{
+          var d0 = cx.getImageData(0, 0, cw, ch), a = d0.data;
+          for(var i=0;i<a.length;i+=4){
+            var g = (a[i]*0.299 + a[i+1]*0.587 + a[i+2]*0.114);
+            g = (g - 128) * 1.35 + 128 + 6;
+            g = g < 0 ? 0 : (g > 255 ? 255 : g);
+            a[i] = a[i+1] = a[i+2] = g;
+          }
+          cx.putImageData(d0, 0, 0);
+        }catch(e){ /* 보정 실패해도 원본으로 진행 */ }
+        try{ res(cv.toDataURL('image/jpeg', 0.92)); }
+        catch(e){ rej(e); }
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function loadTesseract(){
+  if(window.Tesseract) return Promise.resolve(window.Tesseract);
+  if(loadTesseract._p) return loadTesseract._p;
+  loadTesseract._p = new Promise(function(res, rej){
+    var s = document.createElement('script');
+    s.src = TESS_URL;
+    s.onload = function(){ window.Tesseract ? res(window.Tesseract) : rej(new Error('load')); };
+    s.onerror = function(){ rej(new Error('network')); };
+    document.head.appendChild(s);
+    setTimeout(function(){ if(!window.Tesseract) rej(new Error('timeout')); }, 60000);
+  });
+  return loadTesseract._p;
+}
+
+function ocrStep(txt, pct){
+  var st = document.getElementById('ocrStep');
+  if(st) st.textContent = txt;
+  var bar = document.getElementById('ocrBar');
+  if(bar && pct != null) bar.style.width = Math.max(5, Math.min(100, pct)) + '%';
+}
+
+/* ---- 인라인 진행 표시 ---- */
+function scanShow(msg, pct, kind){
+  var box = document.getElementById('scanBox');
+  box.classList.remove('hidden');
+  box.className = 'scan-box' + (kind ? ' ' + kind : '');
+  document.getElementById('scanMsg').textContent = msg;
+  var wrap = document.getElementById('scanBarWrap');
+  if(pct == null){ wrap.classList.add('hidden'); }
+  else { wrap.classList.remove('hidden'); document.getElementById('scanBar').style.width = Math.max(5, Math.min(100, pct)) + '%'; }
+}
+function scanWhy(text){
+  var w = document.getElementById('scanWhy');
+  if(!text){ w.classList.add('hidden'); return; }
+  w.classList.remove('hidden');
+  w.open = false;
+  document.getElementById('scanRaw').textContent = text;
+}
+document.getElementById('scanClose').onclick = function(){
+  ocr.cancel = true;
+  document.getElementById('scanBox').classList.add('hidden');
+};
+
+/* 사진 고르기 */
+document.getElementById('scanCam').onclick = function(){ document.getElementById('camIn').click(); };
+document.getElementById('scanPic').onclick = function(){ document.getElementById('picIn').click(); };
+['camIn','picIn'].forEach(function(id){
+  document.getElementById(id).onchange = function(e){
+    var f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    startScan(f);
+  };
+});
+
+function errText(e){
+  if(e == null) return '(오류 내용 없음)';
+  if(typeof e === 'string') return e;
+  var parts = [];
+  if(e.message) parts.push(e.message);
+  if(e.name && e.name !== 'Error') parts.push('[' + e.name + ']');
+  if(!parts.length){
+    try{
+      var t = Object.prototype.toString.call(e);
+      var keys = Object.keys(e || {}).slice(0, 6).join(',');
+      parts.push(t + (keys ? ' {' + keys + '}' : '') + ' ' + String(e));
+    }catch(x){ parts.push('(알 수 없는 오류)'); }
+  }
+  return parts.join(' ');
+}
+
+/* 이 브라우저에서 글자 인식을 돌릴 수 있는지 먼저 확인 */
+function workerOK(){
+  try{
+    if(typeof Worker === 'undefined') return false;
+    if(typeof WebAssembly === 'undefined') return false;
+    var b = new Blob(['self.onmessage=function(){self.postMessage(1)}'], {type:'text/javascript'});
+    var u = URL.createObjectURL(b);
+    var w = new Worker(u);
+    w.terminate(); URL.revokeObjectURL(u);
+    return true;
+  }catch(e){ return false; }
+}
+
+function startScan(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type || '')){ toast('사진 파일을 선택해 주세요'); return; }
+  ocr.cancel = false; ocr.tries = []; ocr.file = file;
+  scanWhy('');
+
+  if(!workerOK()){
+    scanShow('이 브라우저에서는 사진 읽기가 막혀 있어요. Safari로 열면 됩니다.', null, 'bad');
+    scanWhy('앱 안에 들어 있는 브라우저(카카오톡·Claude 등)에서는 글자 인식 기능이 차단됩니다.\n\n화면 아래 공유 버튼 → "Safari로 열기" 를 누르거나,\n홈 화면에 추가한 아이콘으로 여세요.');
+    return;
+  }
+
+  scanShow('사진 준비 중…', 6);
+
+  shrinkImage(file, 1800).then(function(dataUrl){
+    if(ocr.cancel) throw new Error('cancel');
+    ocr.img = dataUrl;
+    scanShow('글자 인식 준비 중…', 14);
+    return loadTesseract();
+  }).then(function(T){
+    if(ocr.cancel) throw new Error('cancel');
+    function logger(p){
+      if(ocr.cancel) return;
+      if(/traineddata/.test(p.status || ''))
+        scanShow('인식 파일 받는 중… ' + Math.round((p.progress||0)*100) + '%', 20 + (p.progress||0)*40);
+      else if(p.status === 'recognizing text')
+        scanShow('글자를 읽고 있어요… ' + Math.round((p.progress||0)*100) + '%', 60 + (p.progress||0)*38);
+    }
+    /* 기기마다 막히는 곳이 달라 되는 방법을 찾을 때까지 차례로 시도 */
+    var plans = [
+      { lang:'kor+eng', src:'data', opt:{ logger:logger }, note:'기본' },
+      { lang:'kor+eng', src:'data', opt:{ logger:logger, workerBlobURL:false }, note:'사파리 우회' },
+      { lang:'kor+eng', src:'file', opt:{ logger:logger, workerBlobURL:false }, note:'원본 사진' },
+      { lang:'eng',     src:'file', opt:{ logger:logger, workerBlobURL:false }, note:'숫자만' }
+    ];
+    function attempt(i){
+      if(i >= plans.length) throw new Error(ocr.tries.join('\n') || '인식 실패');
+      var pl = plans[i];
+      if(i > 0) scanShow('다른 방법으로 다시 시도 중… (' + pl.note + ')', 30);
+      var img = pl.src === 'file' ? ocr.file : ocr.img;
+      var worker = null;
+      return Promise.resolve()
+        .then(function(){ return T.createWorker ? T.createWorker(pl.lang, 1, pl.opt) : null; })
+        .then(function(w){
+          worker = w;
+          return (worker && worker.recognize) ? worker.recognize(img) : T.recognize(img, pl.lang, pl.opt);
+        })
+        .then(function(r){
+          if(worker && worker.terminate){ try{ worker.terminate(); }catch(e){} }
+          return r;
+        })
+        .catch(function(err){
+          if(worker && worker.terminate){ try{ worker.terminate(); }catch(e){} }
+          if(ocr.cancel) throw err;
+          ocr.tries.push(pl.note + ': ' + errText(err));
+          return attempt(i + 1);
+        });
+    }
+    return attempt(0);
+  }).then(function(r){
+    if(ocr.cancel) return;
+    var txt = (r && r.data && r.data.text) || '';
+    ocr.raw = txt;
+    applyScan(parseReceipt(txt), txt);
+  }).catch(function(e){
+    var msg = errText(e);
+    if(msg === 'cancel') return;
+    scanShow('사진을 읽지 못했어요. 금액을 직접 넣어주세요.', null, 'bad');
+    scanWhy('실패 원인\n' + msg);
+  });
+}
+
+/* 읽은 값을 입력칸에 그대로 채움 (별도 창 없이) */
+function applyScan(r, raw){
+  var got = [];
+
+  if(r.date && r.date.y === store.year && r.date.m >= 1 && r.date.m <= 12){
+    if(r.date.m !== ui.month){ ui.month = r.date.m; render(); }
+    syncDateIn(r.date.d);
+    got.push(r.date.m + '월 ' + r.date.d + '일');
+  }
+  if(r.amount > 0){
+    document.getElementById('amtIn').value = won(r.amount);
+    got.push(won(r.amount) + '원');
+  }
+  if(r.memo) document.getElementById('memoIn').value = r.memo;
+
+  /* 지출 탭으로 맞춰두고 카테고리는 비워 둠 */
+  ui.tab = 'expense'; ui.cat = null;
+  document.getElementById('tabOut').className = 'tab out on';
+  document.getElementById('tabIn').className = 'tab inc';
+  buildCats(); syncAdd();
+
+  if(r.amount > 0){
+    scanShow('사진에서 읽었어요 · ' + got.join(' · ') + ' → 아래에서 카테고리만 고르면 돼요', null, 'good');
+    scanWhy('');
+  }else{
+    scanShow('금액을 찾지 못했어요. 직접 넣어주세요.' + (got.length ? ' (' + got.join(' · ') + '은 읽었어요)' : ''), null, 'bad');
+    scanWhy('사진에서 읽은 글자\n' + ((raw || '').trim() || '(글자를 하나도 읽지 못했어요)'));
+  }
+}
 
 /* 화면 탭 (이번 달 / 모은 돈 / 한눈에) */
 function setView(v){
@@ -1016,18 +1431,28 @@ document.getElementById('addBtn').onclick = function(){
   var amt = parseInt(amtIn.value.replace(/[^0-9]/g,''),10) || 0;
   if(!ui.cat || amt<=0) return;
   var type = ui.tab==='expense' ? 'expense' : (ui.cat===SAVE_CAT ? 'saving' : 'income');
-  var k = mkey(store.year, ui.month);
+  var dt = readDateIn();
+  if(dt && dt.y !== store.year){
+    toast(store.year + '년 가계부라 ' + dt.y + '년 날짜는 넣을 수 없어요');
+    return;
+  }
+  var mo = dt ? dt.m : ui.month;
+  var day = dt ? dt.d : null;
+  var k = mkey(store.year, mo);
   if(!store.entries[k]) store.entries[k] = [];
   store.entries[k].push({
     id: Date.now() + '' + Math.floor(Math.random()*1000),
     type: type, cat: ui.cat, amount: amt,
     memo: document.getElementById('memoIn').value.trim(),
+    day: day,
     by: store.me || store.name || '',
     at: Date.now()
   });
   save();
+  if(mo !== ui.month) ui.month = mo;
   amtIn.value=''; document.getElementById('memoIn').value='';
   render();
+  syncDateIn(day);
   if(type === 'saving' && store.goal > 0){
     var allS = cumSave(store.year,12);
     var p = Math.min(100, Math.round(allS/store.goal*1000)/10);
@@ -1236,9 +1661,22 @@ function buildSave(){
 }
 
 /* ---------------- 내역 ---------------- */
+/* 저장된 날짜가 없으면 입력 시각에서 추정 (그 달이 맞을 때만) */
+function entryDay(e){
+  if(e && e.day) return e.day;
+  if(e && e.at){
+    var t = new Date(e.at);
+    if(t.getFullYear() === store.year && t.getMonth()+1 === ui.month) return t.getDate();
+  }
+  return null;
+}
 function buildList(){
   var box = document.getElementById('list');
-  var arr = list(store.year, ui.month).slice().sort(function(a,b){ return b.at - a.at; });
+  var arr = list(store.year, ui.month).slice().sort(function(a,b){
+    var da = entryDay(a), db = entryDay(b);
+    if(da !== db) return (db || 0) - (da || 0);
+    return b.at - a.at;
+  });
   document.getElementById('cntLab').textContent = arr.length + '건';
   box.innerHTML = '';
   if(!arr.length){
@@ -1251,7 +1689,9 @@ function buildList(){
     var sign = e.type==='expense' ? '-' : '+';
     var color = e.type==='expense' ? 'c-out' : (e.type==='saving' ? 'c-save' : 'c-in');
     var tag = e.type==='expense' ? '지출' : (e.type==='saving' ? '적금' : '입금');
-    if(sync.on && e.by) tag = '👤' + escapeHtml(e.by) + ' · ' + tag;
+    var dnum = entryDay(e);
+    if(dnum) tag = ui.month + '월 ' + dnum + '일 · ' + tag;
+    if(sync.on && e.by) tag = tag + ' · 👤' + escapeHtml(e.by);
     d.innerHTML =
       '<div class="ic2">'+(EMOJI[e.cat]||'•')+'</div>'+
       '<div class="nm"><b>'+e.cat+'</b><span>'+tag+(e.memo?' · '+escapeHtml(e.memo):'')+'</span></div>'+
@@ -1313,7 +1753,7 @@ function buildYear(){
       '<td class="c-out">'+(s.out?wonS(s.out):'-')+'</td>'+
       '<td style="font-weight:800">'+(s.cnt?wonS(s.left):'-')+'</td>'+
       '<td class="c-save">'+(cum?wonS(cum):'-')+'</td>';
-    tr.onclick = (function(m){ return function(){ ui.month=m; render(); window.scrollTo({top:0,behavior:'smooth'}); }; })(m);
+    tr.onclick = (function(m){ return function(){ ui.month=m; render(); syncDateIn(); window.scrollTo({top:0,behavior:'smooth'}); }; })(m);
     tb.appendChild(tr);
   }
   tf.innerHTML = '<tr><td>합계</td><td class="c-in">'+wonS(ti)+'</td><td class="c-out">'+wonS(to)+
@@ -1706,6 +2146,26 @@ document.getElementById('shareOff2').onclick = function(){
   stopSync(); shareBg.classList.add('hidden'); render(); toast('공유를 껐어요');
 };
 
+document.getElementById('joinBtn').onclick = function(){
+  var txt = String(document.getElementById('joinIn').value || '').trim();
+  var m = txt.match(/book=([^&\s]+)[\s\S]*?db=([^&\s]+)/);
+  if(!m){ toast('초대 링크 전체를 붙여넣어 주세요'); return; }
+  var id = decodeURIComponent(m[1]);
+  var url = decodeURIComponent(m[2]).replace(/\/+$/, '');
+  if(!/^https?:\/\//.test(url)){ toast('초대 링크를 다시 확인해 주세요'); return; }
+  setKey(KEY_BASE + '_' + id);
+  var saved = load(curKey);
+  if(saved) store = saved;
+  store.share = { url:url, id:id };
+  if(!store.cid) store.cid = rid(10);
+  if(!store.me) store.me = store.name || '';
+  saveLocal();
+  startSync();
+  shareBg.classList.add('hidden');
+  document.getElementById('joinIn').value = '';
+  toast('가계부를 불러오는 중이에요 🔗');
+  setTimeout(function(){ buildCats(); render(); }, 600);
+};
 document.getElementById('fbOpen').onclick = function(){
   shareBg.classList.add('hidden');
   document.getElementById('fbUrlIn').value = store.share.url || '';
