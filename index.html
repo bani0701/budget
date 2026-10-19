@@ -1773,9 +1773,22 @@ document.getElementById('fbConnect').onclick = function(){
     return;
   }
 
-  var last = KEY_BASE;
-  try{ last = localStorage.getItem(LAST_KEY) || KEY_BASE; }catch(e){}
-  curKey = last;
+  var last = '';
+  try{
+    last = localStorage.getItem(LAST_KEY) || '';
+    if(!last){
+      // 이전 버전에서 연결해 둔 공유 가계부가 있으면 찾아서 이어가기
+      for(var li = 0; li < localStorage.length; li++){
+        var lk = localStorage.key(li);
+        if(lk && lk !== KEY_BASE && lk.indexOf(KEY_BASE + '_') === 0){
+          var cand = load(lk);
+          if(cand && cand.share && cand.share.id && cand.share.url){ last = lk; break; }
+        }
+      }
+    }
+  }catch(e){}
+  if(!last) last = KEY_BASE;
+  setKey(last);
   var o = load(curKey) || load(KEY_BASE);
   if(o){
     store = o;
