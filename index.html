@@ -49,33 +49,49 @@
   /* ---------- 시작 화면 ---------- */
   #gate{
     min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-    padding:32px 22px 40px;
-    background:linear-gradient(160deg,#2f80ff 0%,#4aa3ff 50%,#79c4ff 100%);
-    color:#fff;
+    padding:34px 20px 26px;background:var(--bg);color:var(--ink);
   }
-  .gate-logo{font-size:52px;text-align:center;line-height:1}
-  .gate-title{font-size:26px;font-weight:800;text-align:center;margin:14px 0 4px;letter-spacing:-.5px}
-  .gate-desc{text-align:center;font-size:13.5px;opacity:.82;margin-bottom:26px}
-  .gate-box{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:20px 18px;backdrop-filter:blur(6px)}
-  .gate-label{font-size:12.5px;font-weight:700;opacity:.9;margin:0 0 8px 2px;display:block}
-  .year-row{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .year-btn{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff}
-  .year-btn:active{background:rgba(255,255,255,.34)}
-  .year-now{flex:1;text-align:center;font-size:25px;font-weight:800;letter-spacing:-.5px}
-  .year-now small{font-size:14px;font-weight:600;opacity:.8;margin-left:2px}
+  .gate-logo{display:none}
+  .gate-head{padding:0 4px 20px}
+  .gate-title{font-size:32px;font-weight:900;letter-spacing:-1.4px;margin:0 0 8px;color:#111319;line-height:1.2}
+  .gate-desc{font-size:14px;font-weight:600;color:var(--sub);margin:0;line-height:1.45}
+  .gate-box{background:var(--card);border-radius:24px;padding:22px 20px;box-shadow:var(--shadow)}
+  .gate-label{display:block;font-size:14px;font-weight:800;color:var(--ink);margin:0 0 12px;letter-spacing:-.3px}
+  .gate-label i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--sub);margin-left:3px;letter-spacing:-.2px}
+  .gate-label.sm{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px}
+  .g-sec + .g-sec{margin-top:20px}
+  #yearSec{padding-bottom:18px;border-bottom:1px solid #eef0f4}
+  #previewSec{margin-top:18px;padding-top:16px;border-top:1px solid #eef0f4}
+  .year-row{display:flex;align-items:center;gap:10px;margin:0}
+  .year-btn{
+    width:46px;height:46px;border-radius:99px;background:#f2f4f8;color:#4b5563;
+    font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .year-btn:active{background:#e5eaf2}
+  .year-now{flex:1;text-align:center;font-size:26px;font-weight:800;letter-spacing:-.9px;color:var(--ink)}
+  .year-now small{font-size:15px;font-weight:700;color:#6b7280;margin-left:1px;letter-spacing:-.3px}
   .gate-input{
-    width:100%;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.3);
-    background:rgba(255,255,255,.95);color:#20232a;padding:0 16px;font-size:17px;font-weight:600;outline:none;
+    width:100%;height:54px;border-radius:14px;border:1px solid #e6e9ef;
+    background:#fff;color:var(--ink);padding:0 16px;font-size:16px;font-weight:600;outline:none;
   }
-  .gq{background:rgba(255,255,255,.22) !important;color:#fff !important}
-  .gq:active{background:rgba(255,255,255,.36) !important}
-  .gate-preview{text-align:center;margin:18px 0 2px;font-size:19px;font-weight:800;letter-spacing:-.5px;min-height:26px}
+  .gate-input::placeholder{color:#b4bac4;font-weight:600}
+  .gate-input:focus{border-color:var(--primary)}
+  .gq{
+    flex:1;min-width:0;height:44px !important;border-radius:12px !important;
+    background:#fff !important;border:1px solid #e6e9ef;color:#6b7280 !important;font-size:13px !important;font-weight:700 !important;
+  }
+  .gq:active{background:#f3f6fa !important}
+  .gate-preview{
+    background:#f2f5f9;border-radius:12px;padding:14px 16px;margin:0;text-align:left;
+    font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--ink);min-height:0;
+  }
   .gate-go{
-    width:100%;height:56px;border-radius:16px;background:#fff;color:#2f80ff;
-    font-size:17px;font-weight:800;margin-top:22px;box-shadow:0 10px 24px rgba(0,0,0,.16);
+    width:100%;height:56px;border-radius:14px;background:var(--primary);color:#fff;
+    font-size:17px;font-weight:800;margin-top:20px;box-shadow:0 8px 20px rgba(47,128,255,.26);
   }
   .gate-go:active{transform:translateY(1px)}
-  .gate-sub{display:block;width:100%;text-align:center;margin-top:14px;font-size:13px;opacity:.85;text-decoration:underline}
+  .gate-foot{text-align:center;font-size:12px;font-weight:600;color:#b9bfc9;margin-top:16px;letter-spacing:-.2px}
+  .gate-sub{display:block;width:100%;text-align:center;margin-top:14px;font-size:13px;font-weight:700;color:var(--sub);text-decoration:underline}
 
   /* ---------- 상단바 ---------- */
   .topbar{
@@ -106,9 +122,9 @@
   .guide b{color:var(--primary)}
   .code{background:#f1f4f9;border-radius:10px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;word-break:break-all;color:#1a5fd1;margin-bottom:10px;line-height:1.5}
   .note{font-size:11.5px;font-weight:600;color:#5b6472;background:#f1f4f9;border-radius:12px;padding:10px 12px;line-height:1.5;margin-bottom:10px}
-  .invite{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:14px;margin-bottom:16px;text-align:center}
-  .invite .t{font-size:12px;font-weight:700;opacity:.9}
-  .invite .n{font-size:19px;font-weight:800;margin-top:4px}
+  .invite{background:var(--primary-soft);border:0;border-radius:14px;padding:13px 16px;margin:0 0 20px;text-align:left}
+  .invite .t{font-size:11.5px;font-weight:800;color:var(--primary);letter-spacing:-.2px}
+  .invite .n{font-size:18px;font-weight:800;color:var(--ink);margin-top:3px;letter-spacing:-.5px}
   .sheet-scroll{max-height:82vh;overflow-y:auto}
   .vtabs{display:flex;gap:0;margin:11px -16px -10px;padding:0 10px;background:#fff}
   .vtab{
@@ -467,30 +483,36 @@
 
   <!-- ====== 시작 화면 ====== -->
   <section id="gate">
-    <div class="gate-logo" id="gateLogo">💰</div>
-    <div class="gate-title" id="gateTitle">가계부 시작하기</div>
-    <div class="gate-desc" id="gateDesc">년도와 이름을 정하면 나만의 가계부가 열려요</div>
-
-    <div class="invite hidden" id="inviteBox">
-      <div class="t">🔗 초대받은 공동 가계부</div>
-      <div class="n" id="inviteName">불러오는 중…</div>
+    <div class="gate-logo hidden" id="gateLogo">💰</div>
+    <div class="gate-head">
+      <div class="gate-title" id="gateTitle">가계부 시작하기</div>
+      <div class="gate-desc" id="gateDesc">년도와 이름을 정하면 나만의 가계부가 열려요</div>
     </div>
 
     <div class="gate-box">
-      <span class="gate-label" id="yearLab2">📅 년도 선택</span>
-      <div class="year-row" id="yearWrap">
-        <button class="year-btn" id="yPrev">‹</button>
-        <div class="year-now"><span id="yNow">2026</span><small>년</small></div>
-        <button class="year-btn" id="yNext">›</button>
+      <div class="invite hidden" id="inviteBox">
+        <div class="t">초대받은 공동 가계부</div>
+        <div class="n" id="inviteName">불러오는 중…</div>
       </div>
 
-      <span class="gate-label" id="nameLab">✏️ 이름 입력</span>
-      <input class="gate-input" id="nameIn" placeholder="예) 민수" maxlength="10" autocomplete="off">
+      <div class="g-sec" id="yearSec">
+        <span class="gate-label" id="yearLab2">년도 선택</span>
+        <div class="year-row" id="yearWrap">
+          <button class="year-btn" id="yPrev" aria-label="이전 해">‹</button>
+          <div class="year-now"><span id="yNow">2026</span><small>년</small></div>
+          <button class="year-btn" id="yNext" aria-label="다음 해">›</button>
+        </div>
+      </div>
 
-      <div id="goalWrap">
-        <span class="gate-label" style="margin-top:18px">🎯 적금 목표금액 <span style="font-weight:600;opacity:.75">(1년 기준 · 나중에 수정 가능)</span></span>
+      <div class="g-sec">
+        <span class="gate-label" id="nameLab">이름 입력</span>
+        <input class="gate-input" id="nameIn" placeholder="예) 민수" maxlength="10" autocomplete="off">
+      </div>
+
+      <div class="g-sec" id="goalWrap">
+        <span class="gate-label">저금 목표금액 <i>(1년 기준 · 나중에 수정 가능)</i></span>
         <input class="gate-input" id="goalIn" inputmode="numeric" placeholder="예) 12,000,000" autocomplete="off">
-        <div class="quick" style="margin-top:8px">
+        <div class="quick" style="margin-top:10px">
           <button class="q gq" data-goal="3000000">300만</button>
           <button class="q gq" data-goal="6000000">600만</button>
           <button class="q gq" data-goal="12000000">1,200만</button>
@@ -498,11 +520,15 @@
         </div>
       </div>
 
-      <div class="gate-preview" id="preview">○○네 가계부</div>
+      <div class="g-sec" id="previewSec">
+        <span class="gate-label sm">미리보기</span>
+        <div class="gate-preview" id="preview">○○네 가계부</div>
+      </div>
     </div>
 
     <button class="gate-go" id="goBtn">가계부 열기 →</button>
     <button class="gate-sub hidden" id="loadBtn">저장된 기록 이어서 보기</button>
+    <div class="gate-foot">Made by @94eonie</div>
   </section>
 
   <!-- ====== 메인 ====== -->
@@ -1022,7 +1048,7 @@ function drawGate(){
   var n = nameIn.value.trim();
   var g = onlyNum(goalIn.value);
   preview.innerHTML = (n ? n : '○○') + '네 가계부' +
-    (g > 0 ? '<div style="font-size:12.5px;font-weight:700;opacity:.88;margin-top:5px">🎯 올해 적금 목표 ' + won(g) + '원</div>' : '');
+    (g > 0 ? '<div style="font-size:12.5px;font-weight:700;color:var(--sub);margin-top:5px">올해 적금 목표 ' + won(g) + '원</div>' : '');
 }
 goalIn.addEventListener('input', function(){
   var v = onlyNum(this.value);
@@ -2728,13 +2754,14 @@ document.getElementById('fbConnect').onclick = function(){
     if(!store.cid) store.cid = rid(10);
 
     document.getElementById('inviteBox').classList.remove('hidden');
-    document.getElementById('gateLogo').textContent = '🤝';
     document.getElementById('gateTitle').textContent = '함께 쓰는 가계부';
     document.getElementById('gateDesc').textContent = '내 이름만 적으면 바로 입장돼요';
+    document.getElementById('yearSec').classList.add('hidden');
     document.getElementById('yearWrap').classList.add('hidden');
     document.getElementById('yearLab2').classList.add('hidden');
     document.getElementById('goalWrap').classList.add('hidden');
-    document.getElementById('nameLab').textContent = '✏️ 내 이름 (누가 썼는지 표시용)';
+    document.getElementById('previewSec').classList.add('hidden');
+    document.getElementById('nameLab').innerHTML = '내 이름 <i>(누가 썼는지 표시용)</i>';
     nameIn.placeholder = '예) 영희';
     nameIn.value = store.me || '';
     document.getElementById('preview').textContent = '';
