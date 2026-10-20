@@ -2912,12 +2912,7 @@ function buildPlanCal(){
       cell.innerHTML = inM ? '<span class="n">' + dn + '</span>' : '<span class="n"></span>';
       if(inM){
         cell.onclick = (function(day){ return function(){
-          var had = (ui.planDay === day);
           ui.planDay = day; buildPlanCal(); buildPlanList();
-          /* 일정이 없는 날을 고르면 바로 추가 창 */
-          if(!plansOnISO(dateStr(store.year, ui.month, day)).length){
-            openPlanSheet(null);
-          }
         }; })(dn);
       }
       drow.appendChild(cell);
