@@ -555,7 +555,7 @@
     font-variant-numeric:tabular-nums;line-height:1.2;
   }
   .t2-bar{
-    flex:1;min-width:0;height:52px;border-radius:12px;padding:0 10px 0 12px;
+    flex:1;min-width:0;height:52px;border-radius:12px;padding:0 12px;cursor:pointer;
     display:flex;align-items:center;gap:8px;overflow:hidden;
   }
   .t2-emo{font-size:14px;flex:0 0 auto;line-height:1}
@@ -599,6 +599,8 @@
   .sbtn{flex:1;height:50px;border-radius:14px;background:#f1f4f9;font-size:13.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}
   .sbtn.warn{background:#ffeef0;color:#e0484d}
   .sbtn.main{background:var(--primary);color:#fff}
+  .abtns{flex-direction:column;gap:10px;margin-bottom:4px}
+  .abtns .sbtn{flex:0 0 auto;width:100%;height:58px;border-radius:16px;font-size:15px}
   .foot{text-align:center;font-size:11px;color:#a3a7af;font-weight:600;padding:4px 0 18px}
 
   .toast{
@@ -1030,17 +1032,30 @@
   </div>
 
   <!-- 목표금액 수정 -->
+  <!-- 일정 더보기 -->
+  <div class="sheet-bg hidden" id="planActBg">
+    <div class="sheet">
+      <h3 id="paTitle">일정</h3>
+      <p id="paSub"></p>
+      <div class="srow abtns">
+        <button class="sbtn main" id="paEdit">✏️ 편집하기</button>
+        <button class="sbtn" id="paAlarm">🔔 알림 설정</button>
+        <button class="sbtn warn" id="paDel">🗑️ 삭제하기</button>
+        <button class="sbtn" id="paClose">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 일정 알림 보내기 -->
   <div class="sheet-bg hidden" id="alarmBg">
     <div class="sheet">
       <h3>🔔 알림 설정</h3>
       <p id="alarmSub">폰 캘린더에 넣어두면 앱을 꺼둬도 알림이 울려요.</p>
-      <div class="srow" style="flex-direction:column;gap:9px">
-        <button class="sbtn main" id="alarmIcs" style="width:100%">📅 아이폰 캘린더에 넣기</button>
-        <button class="sbtn" id="alarmGoogle" style="width:100%">🗓️ 구글 캘린더에 넣기</button>
-        <button class="sbtn" id="alarmCancel" style="width:100%">닫기</button>
+      <div class="srow abtns">
+        <button class="sbtn main" id="alarmIcs">📅 아이폰 캘린더에 넣기</button>
+        <button class="sbtn" id="alarmGoogle">🗓️ 구글 캘린더에 넣기</button>
+        <button class="sbtn" id="alarmCancel">닫기</button>
       </div>
-      <div class="note" style="margin-top:12px">아이폰은 파일을 받은 뒤 <b>그 파일을 한 번 더 누르면</b> 캘린더 추가 화면이 열려요.</div>
     </div>
   </div>
 
@@ -1190,7 +1205,7 @@ function setKey(k){
 }
 var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], kinds:null, kindsAt:0,
               tomb:{}, nameAt:0, goalAt:0, share:{url:'',id:''}, base:'', me:'', cid:'' };
-var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
+var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, actPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
 
 /* ---------------- 저장 ---------------- */
 function saveLocal(){
@@ -2889,6 +2904,19 @@ function downloadICS(p){
     toast('받은 파일을 한 번 더 누르면 캘린더에 추가돼요 📅');
   }catch(e){ toast('이 브라우저에서는 파일 받기가 안 돼요'); }
 }
+function openPlanAct(p){
+  var bg = document.getElementById('planActBg');
+  if(!bg) return;
+  ui.actPlan = p;
+  var ko = kindOf(p.kind), sp = planSpan(p);
+  var bits = [ko.e + ' ' + ko.k];
+  bits.push(sp.one ? sp.date : sp.date);
+  bits.push(p.st ? (p.st + (p.et ? ' ~ ' + p.et : '')) : '하루 종일');
+  if(p.by) bits.push(p.by);
+  document.getElementById('paTitle').textContent = p.text;
+  document.getElementById('paSub').textContent = bits.join(' · ');
+  bg.classList.remove('hidden');
+}
 function addToCalendar(p){
   var bg = document.getElementById('alarmBg');
   if(!bg){ downloadICS(p); return; }
@@ -2979,9 +3007,6 @@ function buildPlanList(){
           (meta.length ? '<span>' + meta.join(' · ') + '</span>' : '') +
         '</div>' +
         '<button class="t2-chk" aria-label="완료">' + (p.done ? '✓' : '') + '</button>' +
-        '<button class="t2-ic bell" aria-label="알림 추가">' + ICON_BELL + '</button>' +
-        '<button class="t2-ic edit" aria-label="수정">' + ICON_PEN + '</button>' +
-        '<button class="t2-ic del" aria-label="삭제">' + ICON_X + '</button>' +
       '</div>';
 
     row.querySelector('.t2-chk').onclick = function(e){
@@ -2989,18 +3014,7 @@ function buildPlanList(){
       p.done = !p.done; p.at = Date.now();
       save(); buildPlanList(); paintPlanBadge(); buildAlerts();
     };
-    row.querySelector('.bell').onclick = function(e){
-      e.stopPropagation();
-      addToCalendar(p);
-    };
-    row.querySelector('.edit').onclick = function(e){
-      e.stopPropagation();
-      openPlanSheet(p);
-    };
-    row.querySelector('.del').onclick = function(e){
-      e.stopPropagation();
-      removePlan(p);
-    };
+    row.querySelector('.t2-bar').onclick = function(){ openPlanAct(p); };
     wrap.appendChild(row);
   });
   box.appendChild(wrap);
@@ -3050,6 +3064,18 @@ var openPlanSheet = function(){};
   openPlanSheet = openSheet;
 
   $('planNew').onclick = function(){ openSheet(null); };
+
+  (function(){
+    var pb = $('planActBg');
+    if(pb){
+      var closeP = function(){ pb.classList.add('hidden'); };
+      $('paClose').onclick = closeP;
+      pb.onclick = function(e){ if(e.target === pb) closeP(); };
+      $('paEdit').onclick = function(){ closeP(); if(ui.actPlan) openPlanSheet(ui.actPlan); };
+      $('paAlarm').onclick = function(){ closeP(); if(ui.actPlan) addToCalendar(ui.actPlan); };
+      $('paDel').onclick = function(){ closeP(); if(ui.actPlan) removePlan(ui.actPlan); };
+    }
+  })();
 
   (function(){
     var ab = $('alarmBg');
