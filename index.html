@@ -1030,6 +1030,20 @@
   </div>
 
   <!-- 목표금액 수정 -->
+  <!-- 일정 알림 보내기 -->
+  <div class="sheet-bg hidden" id="alarmBg">
+    <div class="sheet">
+      <h3>🔔 알림 설정</h3>
+      <p id="alarmSub">폰 캘린더에 넣어두면 앱을 꺼둬도 알림이 울려요.</p>
+      <div class="srow" style="flex-direction:column;gap:9px">
+        <button class="sbtn main" id="alarmIcs" style="width:100%">📅 아이폰 캘린더에 넣기</button>
+        <button class="sbtn" id="alarmGoogle" style="width:100%">🗓️ 구글 캘린더에 넣기</button>
+        <button class="sbtn" id="alarmCancel" style="width:100%">닫기</button>
+      </div>
+      <div class="note" style="margin-top:12px">아이폰은 파일을 받은 뒤 <b>그 파일을 한 번 더 누르면</b> 캘린더 추가 화면이 열려요.</div>
+    </div>
+  </div>
+
   <!-- 일정 추가 -->
   <div class="sheet-bg hidden" id="planBg">
     <div class="sheet sheet-scroll">
@@ -1176,7 +1190,7 @@ function setKey(k){
 }
 var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], kinds:null, kindsAt:0,
               tomb:{}, nameAt:0, goalAt:0, share:{url:'',id:''}, base:'', me:'', cid:'' };
-var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
+var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
 
 /* ---------------- 저장 ---------------- */
 function saveLocal(){
@@ -2846,17 +2860,25 @@ function planICS(p){
   L.push('END:VALARM','END:VEVENT','END:VCALENDAR');
   return L.join('\r\n');
 }
-function addToCalendar(p){
+function gcalUrl(p){
+  var ko = kindOf(p.kind);
+  var d1, d2;
+  if(p.st){
+    d1 = p.sd.replace(/-/g,'') + 'T' + p.st.replace(':','') + '00';
+    d2 = (p.ed || p.sd).replace(/-/g,'') + 'T' + (p.et || p.st).replace(':','') + '00';
+  }else{
+    d1 = p.sd.replace(/-/g,'');
+    d2 = nextDay(p.ed || p.sd).replace(/-/g,'');
+  }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(ko.e + ' ' + p.text)
+    + '&dates=' + d1 + '%2F' + d2
+    + '&ctz=Asia%2FSeoul'
+    + '&details=' + encodeURIComponent(ko.k + (p.by ? ' · ' + p.by : ''));
+}
+function downloadICS(p){
   var ics = planICS(p);
   var name = (p.text || '일정').replace(/[\/\\:*?"<>|]/g, '') + '.ics';
-  try{
-    var file = new File([ics], name, { type:'text/calendar' });
-    if(navigator.canShare && navigator.canShare({ files:[file] })){
-      navigator.share({ files:[file] }).catch(function(){});
-      toast('캘린더 앱에서 "추가"를 눌러주세요 🔔');
-      return;
-    }
-  }catch(e){}
   try{
     var blob = new Blob([ics], { type:'text/calendar;charset=utf-8' });
     var url = URL.createObjectURL(blob);
@@ -2864,8 +2886,16 @@ function addToCalendar(p){
     a.href = url; a.download = name; a.rel = 'noopener';
     document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
-    toast('파일로 받았어요 · 파일 앱에서 열면 캘린더에 추가돼요');
-  }catch(e2){ toast('이 브라우저에서는 알림 추가가 안 돼요'); }
+    toast('받은 파일을 한 번 더 누르면 캘린더에 추가돼요 📅');
+  }catch(e){ toast('이 브라우저에서는 파일 받기가 안 돼요'); }
+}
+function addToCalendar(p){
+  var bg = document.getElementById('alarmBg');
+  if(!bg){ downloadICS(p); return; }
+  ui.alarmPlan = p;
+  var sub = document.getElementById('alarmSub');
+  if(sub) sub.textContent = p.text + ' · ' + (p.st ? p.st + ' 시작, 10분 전 알림' : '하루 종일, 전날 저녁 9시 알림');
+  bg.classList.remove('hidden');
 }
 function removePlan(p){
   Object.keys(store.plans || {}).forEach(function(k){
@@ -3020,6 +3050,20 @@ var openPlanSheet = function(){};
   openPlanSheet = openSheet;
 
   $('planNew').onclick = function(){ openSheet(null); };
+
+  (function(){
+    var ab = $('alarmBg');
+    if(!ab) return;
+    function closeA(){ ab.classList.add('hidden'); }
+    $('alarmCancel').onclick = closeA;
+    ab.onclick = function(e){ if(e.target === ab) closeA(); };
+    $('alarmIcs').onclick = function(){ closeA(); if(ui.alarmPlan) downloadICS(ui.alarmPlan); };
+    $('alarmGoogle').onclick = function(){
+      closeA();
+      if(!ui.alarmPlan) return;
+      window.open(gcalUrl(ui.alarmPlan), '_blank');
+    };
+  })();
   $('planCancel').onclick = closeSheet;
   bg.onclick = function(e){ if(e.target === bg) closeSheet(); };
 
