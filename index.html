@@ -131,6 +131,13 @@
   .invite .n{font-size:18px;font-weight:800;color:var(--ink);margin-top:3px;letter-spacing:-.5px}
   .sheet-scroll{max-height:82vh;overflow-y:auto}
   .vtabs{display:flex;gap:0;margin:11px -16px -10px;padding:0 10px;background:#fff}
+  .vbadge{
+    display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
+    min-width:17px;height:17px;padding:2px 4px 0;line-height:1;
+    margin-left:5px;border-radius:99px;background:var(--expense);color:#fff;font-size:10px;font-weight:800;
+    font-variant-numeric:tabular-nums;letter-spacing:0;text-indent:0;
+    vertical-align:middle;position:relative;top:-1px;
+  }
   .vtab{
     flex:1;height:44px;border-radius:0;background:transparent;position:relative;
     font-size:15px;font-weight:700;color:#b7bbc4;letter-spacing:-.4px;
@@ -672,7 +679,7 @@
         <button class="vtab on" data-view="month">이번 달</button>
         <button class="vtab" data-view="save">모은 돈</button>
         <button class="vtab" data-view="stats">한눈에</button>
-        <button class="vtab" data-view="plan">캘린더</button>
+        <button class="vtab" data-view="plan">캘린더<span class="vbadge hidden" id="planBadge">0</span></button>
       </div>
     </div>
 
@@ -1974,6 +1981,22 @@ function buildAlerts(){
   var prevM = m>1 ? m-1 : 0;
   var out = [];
 
+  /* 오늘·내일 일정 알림 */
+  var now0 = new Date();
+  if(store.year === now0.getFullYear() && m === (now0.getMonth()+1)){
+    var td = dateStr(now0.getFullYear(), now0.getMonth()+1, now0.getDate());
+    var tm = nextDay(td);
+    [['오늘', td], ['내일', tm]].forEach(function(pair){
+      var ps = plansOnISO(pair[1]).filter(function(x){ return !x.done; });
+      if(!ps.length) return;
+      var f = ps[0];
+      var txt = pair[0] + ' ' + (f.st ? f.st + ' ' : '') + f.text;
+      if(ps.length > 1) txt += ' 외 ' + (ps.length - 1) + '건';
+      if(txt.length > 35) txt = txt.slice(0, 34) + '…';
+      out.push(['a-info', '🗓️', txt, 'base']);
+    });
+  }
+
   if(s.cnt === 0){
     out.push(['a-info','📝','아직 ' + m + '월 기록이 없어요. 수입부터 입력해 보세요','base']);
   }
@@ -2792,7 +2815,58 @@ function buildPlanCal(){
   }
 }
 var ICON_PEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+var ICON_BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
 var ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+function icsTime(d, t){
+  return d.replace(/-/g,'') + 'T' + (t || '09:00').replace(':','') + '00';
+}
+function nextDay(d){
+  var a = d.split('-');
+  var x = new Date(+a[0], +a[1]-1, +a[2]+1);
+  return dateStr(x.getFullYear(), x.getMonth()+1, x.getDate());
+}
+function planICS(p){
+  var ko = kindOf(p.kind);
+  var L = [], timed = !!p.st;
+  L.push('BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//우리집 가계부//KO','CALSCALE:GREGORIAN');
+  L.push('BEGIN:VEVENT');
+  L.push('UID:' + p.id + '@budget');
+  L.push('DTSTAMP:' + icsTime(dateStr(store.year, ui.month, ui.planDay), '00:00') + 'Z');
+  if(timed){
+    L.push('DTSTART:' + icsTime(p.sd, p.st));
+    L.push('DTEND:' + icsTime(p.ed || p.sd, p.et || p.st));
+  }else{
+    L.push('DTSTART;VALUE=DATE:' + p.sd.replace(/-/g,''));
+    L.push('DTEND;VALUE=DATE:' + nextDay(p.ed || p.sd).replace(/-/g,''));
+  }
+  L.push('SUMMARY:' + ko.e + ' ' + p.text.replace(/[,;\\]/g, ' '));
+  L.push('DESCRIPTION:' + ko.k + (p.by ? ' · ' + p.by : ''));
+  L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:' + p.text.replace(/[,;\\]/g, ' '));
+  L.push(timed ? 'TRIGGER:-PT10M' : 'TRIGGER:-PT15H');
+  L.push('END:VALARM','END:VEVENT','END:VCALENDAR');
+  return L.join('\r\n');
+}
+function addToCalendar(p){
+  var ics = planICS(p);
+  var name = (p.text || '일정').replace(/[\/\\:*?"<>|]/g, '') + '.ics';
+  try{
+    var file = new File([ics], name, { type:'text/calendar' });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      navigator.share({ files:[file] }).catch(function(){});
+      toast('캘린더 앱에서 "추가"를 눌러주세요 🔔');
+      return;
+    }
+  }catch(e){}
+  try{
+    var blob = new Blob([ics], { type:'text/calendar;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+    toast('파일로 받았어요 · 파일 앱에서 열면 캘린더에 추가돼요');
+  }catch(e2){ toast('이 브라우저에서는 알림 추가가 안 돼요'); }
+}
 function removePlan(p){
   Object.keys(store.plans || {}).forEach(function(k){
     store.plans[k] = (store.plans[k] || []).filter(function(x){ return x.id !== p.id; });
@@ -2875,6 +2949,7 @@ function buildPlanList(){
           (meta.length ? '<span>' + meta.join(' · ') + '</span>' : '') +
         '</div>' +
         '<button class="t2-chk" aria-label="완료">' + (p.done ? '✓' : '') + '</button>' +
+        '<button class="t2-ic bell" aria-label="알림 추가">' + ICON_BELL + '</button>' +
         '<button class="t2-ic edit" aria-label="수정">' + ICON_PEN + '</button>' +
         '<button class="t2-ic del" aria-label="삭제">' + ICON_X + '</button>' +
       '</div>';
@@ -2882,7 +2957,11 @@ function buildPlanList(){
     row.querySelector('.t2-chk').onclick = function(e){
       e.stopPropagation();
       p.done = !p.done; p.at = Date.now();
-      save(); buildPlanList();
+      save(); buildPlanList(); paintPlanBadge(); buildAlerts();
+    };
+    row.querySelector('.bell').onclick = function(e){
+      e.stopPropagation();
+      addToCalendar(p);
     };
     row.querySelector('.edit').onclick = function(e){
       e.stopPropagation();
@@ -2896,7 +2975,16 @@ function buildPlanList(){
   });
   box.appendChild(wrap);
 }
-function buildPlan(){ buildPlanCal(); buildPlanList(); }
+function paintPlanBadge(){
+  var b = document.getElementById('planBadge');
+  if(!b) return;
+  var now = new Date();
+  var n = plansOnISO(dateStr(now.getFullYear(), now.getMonth()+1, now.getDate()))
+            .filter(function(x){ return !x.done; }).length;
+  b.textContent = n;
+  b.classList[n ? 'remove' : 'add']('hidden');
+}
+function buildPlan(){ buildPlanCal(); buildPlanList(); paintPlanBadge(); }
 var openPlanSheet = function(){};
 
 (function(){
