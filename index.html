@@ -2932,7 +2932,7 @@ function removePlan(p){
   store.tomb = store.tomb || {};
   store.tomb[p.id] = Date.now();
   save();
-  buildPlanCal(); buildPlanList();
+  buildPlanCal(); buildPlanList(); paintPlanBadge(); buildAlerts();
   toast('일정을 삭제했어요');
 }
 function minOf(t){
