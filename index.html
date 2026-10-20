@@ -421,6 +421,12 @@
   .item .del{width:28px;height:28px;border-radius:9px;background:#f6f8fb;color:#b5b8bf;font-size:14px;flex:0 0 auto}
   .empty{text-align:center;color:var(--sub);font-size:13px;font-weight:600;padding:22px 0}
   .empty .e{display:block;font-size:30px;margin-bottom:8px;opacity:.6}
+  .empty-tap{
+    display:block;width:100%;background:none;border:0;padding:24px 0 22px;border-radius:14px;
+  }
+  .empty-tap .t1{display:block;font-size:13px;font-weight:700;color:var(--sub)}
+  .empty-tap .t2{display:block;font-size:12.5px;font-weight:800;color:var(--primary);margin-top:5px}
+  .empty-tap:active{background:#f4f7fb}
 
   /* 달력 */
   .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
@@ -523,6 +529,27 @@
     font-size:16px;display:flex;align-items:center;justify-content:center;
   }
   .emo-row button.on{border-color:var(--primary);background:var(--primary-soft)}
+  .emo-more{
+    margin:0 0 10px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px;
+    display:flex;gap:7px;align-items:stretch;
+  }
+  .emo-grid{
+    flex:1;min-width:0;display:grid;grid-template-columns:repeat(8,1fr);gap:4px;
+    max-height:150px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .emo-grid::-webkit-scrollbar{width:0;height:0}
+  .emo-grid button{width:100%;height:32px;border-radius:8px;background:none;border:0;font-size:17px;padding:0}
+  .emo-grid button:active{background:var(--primary-soft)}
+  .emo-bar{flex:0 0 4px;border-radius:99px;background:#eceff4;position:relative;margin:2px 0}
+  .emo-bar i{
+    position:absolute;left:0;width:4px;border-radius:99px;background:#b9c1cd;
+    top:0;height:30%;transition:top .08s linear;
+  }
+  .emo-row button.emo-add{
+    border:1.5px dashed #c4d8ff;background:#fff;color:var(--primary);font-size:16px;font-weight:800;
+  }
+  .emo-row button.emo-add:active{background:var(--primary-soft)}
   .nk-add{flex:0 0 64px;height:46px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:800}
   .p-kinds{display:flex;flex-wrap:wrap;gap:6px}
   .pk{
@@ -1072,6 +1099,10 @@
       <div class="p-kinds" id="planKinds"></div>
       <div class="newkind hidden" id="newKindBox">
         <div class="emo-row" id="newKindEmos"></div>
+        <div class="emo-more hidden" id="emoPickBox">
+          <div class="emo-grid" id="emoGrid"></div>
+          <div class="emo-bar"><i id="emoThumb"></i></div>
+        </div>
         <div class="p-form">
           <input class="p-text" id="newKindName" placeholder="종류 이름 (예: 병원)" maxlength="6">
           <button class="nk-add" id="newKindAdd" type="button">추가</button>
@@ -1203,7 +1234,7 @@ function setKey(k){
   curKey = k;
   try{ localStorage.setItem(LAST_KEY, k); }catch(e){}
 }
-var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], kinds:null, kindsAt:0,
+var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], emos:[], kinds:null, kindsAt:0,
               tomb:{}, nameAt:0, goalAt:0, share:{url:'',id:''}, base:'', me:'', cid:'' };
 var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, actPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
 
@@ -1225,7 +1256,8 @@ function load(key){
       o.cid = o.cid || '';
       o.plans = (o.plans && typeof o.plans === 'object') ? o.plans : {};
       o.people = Array.isArray(o.people) ? o.people : [];
-      o.kinds = Array.isArray(o.kinds) ? o.kinds : null; o.kindsAt = o.kindsAt || 0; o.kindsV = o.kindsV || 0;
+      o.kinds = Array.isArray(o.kinds) ? o.kinds : null; o.kindsAt = o.kindsAt || 0;
+      o.emos = Array.isArray(o.emos) ? o.emos : []; o.kindsV = o.kindsV || 0;
       return o;
     }
   }catch(e){}
@@ -2658,12 +2690,81 @@ function buildPlanKinds(){
   };
   box.appendChild(add);
 }
+function emoList(){
+  if(!Array.isArray(store.emos)) store.emos = [];
+  return KIND_EMOS.concat(store.emos.filter(function(e){ return KIND_EMOS.indexOf(e) < 0; }));
+}
+function firstEmo(v){
+  v = (v || '').trim();
+  if(!v) return '';
+  var arr = Array.from ? Array.from(v) : v.split('');
+  return arr.slice(0, 2).join('').replace(/[\s]/g,'').slice(0, 4) ? arr[0] : '';
+}
+var EMO_ALL = ['📌','📝','✅','⭐️','❤️','🔥','🎉','🎊','🎁','🎂','🍰','🍱','🍚','🍜','🍗','🍕','🍔','🍟','🍣','🍦','☕️','🍺','🍻','🍷','🍉','🍎','🥗','🧁','🏠','🏢','🏫','🏥','💒','🏖️','🏔️','⛺️','🚗','🚌','✈️','🚄','🛳️','🚲','🛵','🧳','🗺️','💼','📚','✏️','🖥️','📱','📷','🎧','🎬','🎤','🎮','⚽️','🏀','🏸','🎾','🏊','🧘','💪','🚴','🏃','👶','🍼','🧸','🐶','🐱','🐣','🌷','🌸','🌳','🌈','☀️','🌙','❄️','💧','💊','🩺','💉','🦷','👓','💄','💍','👗','👠','🛍️','🧺','🧹','🧼','💰','💳','🏦','📈','🎓','🎒','🧾','🔑','🗓️','⏰','🔔','💡','🎯','🤍','💝'];
+function emoList(){
+  if(!Array.isArray(store.emos)) store.emos = [];
+  return KIND_EMOS.concat(store.emos.filter(function(e){ return KIND_EMOS.indexOf(e) < 0; }));
+}
+function firstEmo(v){
+  v = (v || '').trim();
+  if(!v) return '';
+  var arr = Array.from ? Array.from(v) : v.split('');
+  return arr.slice(0, 2).join('').replace(/[\s]/g,'').slice(0, 4) ? arr[0] : '';
+}
+var EMO_ALL = ['📌','📝','✅','⭐️','❤️','🔥','🎉','🎊','🎁','🎂','🍰','🍱','🍚','🍜','🍗','🍕',
+  '🍔','🍟','🍣','🍦','☕️','🍺','🍻','🍷','🧃','🍉','🍎','🥗','🧁','🏠','🏢','🏫',
+  '🏥','💒','🏖️','🏔️','⛺️','🚗','🚌','✈️','🚄','🛳️','🚲','🛵','🧳','🗺️','💼','📚',
+  '✏️','🖥️','📱','📷','🎧','🎬','🎤','🎮','⚽️','🏀','🏸','🎾','🏊','🧘','💪','🚴',
+  '🏃','👶','🍼','🧸','🐶','🐱','🐣','🌷','🌸','🌳','🌈','☀️','🌙','❄️','💧','💊',
+  '🩺','💉','🦷','👓','💄','💍','👗','👠','🛍️','🧺','🧹','🧼','💰','💳','🏦','📈',
+  '🎓','🎒','🧾','🔑','🗓️','⏰','🔔','💡','🎯','🤍','💝'];
+function emoList(){
+  if(!Array.isArray(store.emos)) store.emos = [];
+  return KIND_EMOS.concat(store.emos.filter(function(e){ return KIND_EMOS.indexOf(e) < 0; }));
+}
+function pickEmo(e){
+  if(!e) return;
+  if(!Array.isArray(store.emos)) store.emos = [];
+  if(KIND_EMOS.indexOf(e) < 0 && store.emos.indexOf(e) < 0) store.emos.push(e);
+  ui.newKindEmo = e;
+  saveLocal();
+  var bx = document.getElementById('emoPickBox');
+  if(bx) bx.classList.add('hidden');
+  buildKindEmos();
+}
+function buildEmoGrid(){
+  var g = document.getElementById('emoGrid');
+  if(!g || g.dataset.built === '1') return;
+  g.innerHTML = '';
+  EMO_ALL.forEach(function(e){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = e;
+    b.onclick = function(){ pickEmo(e); };
+    g.appendChild(b);
+  });
+  g.dataset.built = '1';
+  g.onscroll = paintEmoBar;
+  setTimeout(paintEmoBar, 0);
+}
+function paintEmoBar(){
+  var g = document.getElementById('emoGrid');
+  var th = document.getElementById('emoThumb');
+  if(!g || !th) return;
+  var h = g.clientHeight, sh = g.scrollHeight;
+  if(sh <= h + 1){ th.style.height = '100%'; th.style.top = '0'; return; }
+  var ratio = h / sh;
+  var tH = Math.max(18, Math.round(h * ratio));
+  th.style.height = tH + 'px';
+  th.style.top = Math.round((h - tH) * (g.scrollTop / (sh - h))) + 'px';
+}
 function buildKindEmos(){
   var box = document.getElementById('newKindEmos');
   if(!box) return;
-  if(!ui.newKindEmo) ui.newKindEmo = KIND_EMOS[0];
+  var list = emoList();
+  if(!ui.newKindEmo) ui.newKindEmo = list[0];
   box.innerHTML = '';
-  KIND_EMOS.forEach(function(e){
+  list.forEach(function(e){
     var b = document.createElement('button');
     b.type = 'button';
     b.className = (e === ui.newKindEmo ? 'on' : '');
@@ -2671,6 +2772,18 @@ function buildKindEmos(){
     b.onclick = function(){ ui.newKindEmo = e; buildKindEmos(); };
     box.appendChild(b);
   });
+  var add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'emo-add';
+  add.textContent = '＋';
+  add.setAttribute('aria-label', '이모지 더 고르기');
+  add.onclick = function(){
+    var bx = document.getElementById('emoPickBox');
+    if(!bx) return;
+    buildEmoGrid();
+    bx.classList.toggle('hidden');
+  };
+  box.appendChild(add);
 }
 function planPeople(){
   var out = [], push = function(n){
@@ -2799,7 +2912,12 @@ function buildPlanCal(){
       cell.innerHTML = inM ? '<span class="n">' + dn + '</span>' : '<span class="n"></span>';
       if(inM){
         cell.onclick = (function(day){ return function(){
+          var had = (ui.planDay === day);
           ui.planDay = day; buildPlanCal(); buildPlanList();
+          /* 일정이 없는 날을 고르면 바로 추가 창 */
+          if(!plansOnISO(dateStr(store.year, ui.month, day)).length){
+            openPlanSheet(null);
+          }
         }; })(dn);
       }
       drow.appendChild(cell);
@@ -2979,7 +3097,12 @@ function buildPlanList(){
   if(cntEl) cntEl.textContent = arr.length + '개';
   box.innerHTML = '';
   if(!arr.length){
-    box.innerHTML = '<div class="empty"><span class="e">🗓️</span>이 날은 일정이 없어요</div>';
+    box.innerHTML = '<button class="empty empty-tap" id="planEmpty">' +
+      '<span class="e">🗓️</span>' +
+      '<span class="t1">아직 등록된 일정이 없어요</span>' +
+      '<span class="t2">여기를 눌러 일정을 추가해 보세요</span></button>';
+    var eb = document.getElementById('planEmpty');
+    if(eb) eb.onclick = function(){ openPlanSheet(null); };
     return;
   }
 
