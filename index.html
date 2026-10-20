@@ -455,6 +455,124 @@
   .rbar{height:8px;border-radius:99px;background:#eceff4;overflow:hidden}
   .rbar > i{display:block;height:100%;border-radius:99px;background:var(--primary);transition:width .35s}
 
+  /* 일정 캘린더 */
+  .pcal{user-select:none}
+  .pc-wd{display:grid;grid-template-columns:repeat(7,1fr)}
+  .pc-wd span{text-align:center;font-size:10px;font-weight:800;color:var(--sub);padding:0 0 7px}
+  .pc-wd span.sun{color:#e06a6a} .pc-wd span.sat{color:#6a8ae0}
+  .pc-wk{border-top:1px solid var(--line);padding:5px 0 7px;min-height:52px}
+  .pc-days{display:grid;grid-template-columns:repeat(7,1fr)}
+  .pc-day{
+    display:flex;align-items:center;justify-content:center;background:none;padding:0;
+    font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:-.3px;
+  }
+  .pc-day .n{
+    min-width:23px;height:23px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .pc-day.sun .n{color:#e06a6a} .pc-day.sat .n{color:#6a8ae0}
+  .pc-day.sel .n{background:var(--primary-soft);color:var(--primary)}
+  .pc-day.today .n{background:var(--primary);color:#fff}
+  .pc-lanes{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:4px}
+  .pc-bar{
+    height:17px;border-radius:5px;padding:0 5px;font-size:9.5px;font-weight:800;line-height:1;
+    display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    min-width:0;letter-spacing:-.4px;
+  }
+  .pc-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pc-bar.done span{text-decoration:line-through;opacity:.6}
+
+  .mini.pplus{background:var(--primary);color:#fff;padding:7px 11px}
+  .p-clear{flex:0 0 auto;height:44px;padding:0 10px;border-radius:12px;background:#f1f4f9;color:var(--sub);font-size:11.5px;font-weight:800}
+  .p-clear:active{background:#e6ebf3}
+  .p-text{
+    width:100%;height:46px;border-radius:14px;border:1.5px solid var(--line);
+    background:#f6f8fb;padding:0 14px;font-size:14px;font-weight:600;color:var(--ink);outline:none;
+  }
+  .p-form{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .p-tilde{flex:0 0 auto;font-size:13px;font-weight:800;color:var(--sub)}
+  .p-date,.p-time{
+    flex:1;min-width:0;height:46px;border-radius:12px;border:1.5px solid var(--line);
+    background:#f6f8fb;padding:0 10px;font-size:13.5px;font-weight:700;color:var(--ink);outline:none;
+    font-family:inherit;text-align:center;
+  }
+  .p-date:focus,.p-time:focus,.p-text:focus{border-color:var(--primary)}
+  .p-lab2{display:block;font-size:14px;font-weight:800;color:#4b5563;margin:18px 0 9px 2px;letter-spacing:-.3px}
+  .p-lab2 i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--sub);margin-left:3px}
+  .p-labrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:18px 0 9px}
+  .p-labrow .p-lab2{margin:0 0 0 2px}
+  #planBg .sheet > .p-labrow:first-of-type{margin-top:6px}
+  .p-clear2{background:none;border:0;padding:5px 10px;border-radius:999px;color:var(--primary);
+            font-size:12px;font-weight:800;margin:0}
+  .p-clear2.on{background:var(--primary);color:#fff}
+  .p-tag2{flex:0 0 34px;font-size:12.5px;font-weight:700;color:var(--sub);letter-spacing:-.3px}
+  .pk .pkx{margin-left:3px;font-size:11px;font-weight:900;opacity:.75}
+  .pk.pkadd{border-style:dashed;color:var(--primary);border-color:#c4d8ff;box-shadow:none;margin:0}
+  .newkind{margin-top:10px;background:#f6f8fb;border-radius:14px;padding:12px}
+  .emo-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .newkind .p-form{margin-bottom:0}
+  .emo-row button{
+    width:34px;height:34px;border-radius:10px;background:#fff;border:1.5px solid var(--line);
+    font-size:16px;display:flex;align-items:center;justify-content:center;
+  }
+  .emo-row button.on{border-color:var(--primary);background:var(--primary-soft)}
+  .nk-add{flex:0 0 64px;height:46px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:800}
+  .p-kinds{display:flex;flex-wrap:wrap;gap:6px}
+  .pk{
+    display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 11px;border-radius:999px;
+    border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);
+    flex:0 0 auto;width:auto;
+  }
+  .pk .pke{font-size:13px;line-height:1}
+  .pk.on{color:#fff;border-color:transparent}
+  .p-name{
+    flex:1;min-width:0;height:44px;border-radius:12px;border:1.5px solid var(--line);
+    background:#f6f8fb;padding:0 12px;font-size:13.5px;font-weight:700;color:var(--ink);outline:none;
+    -webkit-appearance:none;appearance:none;font-family:inherit;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%238a9099' stroke-width='2' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;
+  }
+  .p-name:focus{border-color:var(--primary)}
+
+  /* 타임라인: 왼쪽 시간 · 오른쪽 가로 바 */
+  .tl2{display:flex;flex-direction:column;gap:8px;padding:2px 0}
+  .t2-row{display:flex;align-items:center;gap:10px}
+  .t2-row.done{opacity:.5}
+  .t2-time{flex:0 0 46px;text-align:left}
+  .t2-time b{
+    display:block;font-size:12.5px;font-weight:500;color:var(--ink);letter-spacing:-.3px;
+    font-variant-numeric:tabular-nums;line-height:1.2;
+  }
+  .t2-time span{
+    display:block;font-size:10.5px;font-weight:500;color:#b2b8c2;margin-top:2px;
+    font-variant-numeric:tabular-nums;line-height:1.2;
+  }
+  .t2-bar{
+    flex:1;min-width:0;height:52px;border-radius:12px;padding:0 10px 0 12px;
+    display:flex;align-items:center;gap:8px;overflow:hidden;
+  }
+  .t2-emo{font-size:14px;flex:0 0 auto;line-height:1}
+  .t2-tx{flex:1;min-width:0}
+  .t2-tx b{
+    display:block;font-size:13.5px;font-weight:800;letter-spacing:-.3px;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;
+  }
+  .t2-row.done .t2-tx b{text-decoration:line-through;color:var(--sub)}
+  .t2-tx > span{
+    display:block;font-size:10.5px;font-weight:700;color:var(--sub);margin-top:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;
+  }
+  .t2-tx .pw{font-weight:800;color:#7a8191}
+  .t2-chk{
+    width:20px;height:20px;border-radius:99px;border:1.5px solid rgba(20,22,28,.18);background:rgba(255,255,255,.8);
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:900;padding:0;
+  }
+  .t2-row.done .t2-chk{background:var(--primary);border-color:var(--primary)}
+  .t2-ic{width:24px;height:24px;background:none;border:0;padding:0;flex:0 0 auto;
+         display:flex;align-items:center;justify-content:center;color:#8d94a0}
+  .t2-ic svg{width:16px;height:16px;display:block}
+  .t2-ic:active{color:var(--ink)}
+
   /* 연간표 */
   table{width:100%;border-collapse:collapse;font-size:11.5px}
   th,td{padding:7px 3px;text-align:right;white-space:nowrap}
@@ -554,6 +672,7 @@
         <button class="vtab on" data-view="month">이번 달</button>
         <button class="vtab" data-view="save">모은 돈</button>
         <button class="vtab" data-view="stats">한눈에</button>
+        <button class="vtab" data-view="plan">캘린더</button>
       </div>
     </div>
 
@@ -756,6 +875,25 @@
 
       </div><!-- /탭3 -->
 
+      <!-- ===== 탭4 · 캘린더(일정) ===== -->
+      <div class="view v-plan hidden">
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t" id="planTitle">10월 일정</div>
+          <button class="mini pplus" id="planNew">일정 추가</button>
+        </div>
+        <div class="pcal" id="pcal"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t" id="planDayTitle">10월 20일 일정</div>
+          <span class="muted" id="planDayCnt">0개</span>
+        </div>
+        <div class="tl" id="planList"></div>
+      </div>
+      </div><!-- /탭4 -->
+
       <div class="foot">기록은 이 기기 브라우저에 저장돼요 · ⚙️에서 백업하세요</div>
     </main>
   </section>
@@ -885,6 +1023,57 @@
   </div>
 
   <!-- 목표금액 수정 -->
+  <!-- 일정 추가 -->
+  <div class="sheet-bg hidden" id="planBg">
+    <div class="sheet sheet-scroll">
+      <h3>🗓️ 일정 추가</h3>
+      <p id="planSheetSub">날짜를 고르고 내용을 적어주세요.</p>
+
+      <div class="p-labrow">
+        <span class="p-lab2">종류</span>
+        <button class="p-clear2" id="kindEdit" type="button">편집</button>
+      </div>
+      <div class="p-kinds" id="planKinds"></div>
+      <div class="newkind hidden" id="newKindBox">
+        <div class="emo-row" id="newKindEmos"></div>
+        <div class="p-form">
+          <input class="p-text" id="newKindName" placeholder="종류 이름 (예: 병원)" maxlength="6">
+          <button class="nk-add" id="newKindAdd" type="button">추가</button>
+        </div>
+      </div>
+
+      <div class="p-labrow">
+        <span class="p-lab2">기간</span>
+        <button class="p-clear2" id="planTimeOn" type="button">시간 지정</button>
+      </div>
+      <div class="p-form">
+        <span class="p-tag2">시작</span>
+        <input class="p-date" id="planSdt" type="date">
+      </div>
+      <div class="p-form">
+        <span class="p-tag2">종료</span>
+        <input class="p-date" id="planEdt" type="date">
+      </div>
+
+      <span class="p-lab2">일정 소유자</span>
+      <div class="p-form">
+        <select class="p-name" id="planBy"></select>
+      </div>
+      <div class="p-form hidden" id="newByBox">
+        <input class="p-text" id="newByName" placeholder="새 이름" maxlength="10">
+        <button class="nk-add" id="newByAdd" type="button">추가</button>
+      </div>
+
+      <span class="p-lab2">내용</span>
+      <input class="p-text" id="planText" placeholder="예) 어린이집 상담" maxlength="40">
+
+      <div class="srow" style="margin-top:20px">
+        <button class="sbtn" id="planCancel">취소</button>
+        <button class="sbtn main" id="planAdd">추가하기</button>
+      </div>
+    </div>
+  </div>
+
   <div class="sheet-bg hidden" id="goalBg">
     <div class="sheet">
       <h3>🎯 적금 목표금액</h3>
@@ -978,9 +1167,9 @@ function setKey(k){
   curKey = k;
   try{ localStorage.setItem(LAST_KEY, k); }catch(e){}
 }
-var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{},
+var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], kinds:null, kindsAt:0,
               tomb:{}, nameAt:0, goalAt:0, share:{url:'',id:''}, base:'', me:'', cid:'' };
-var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', gateYear:(new Date()).getFullYear(), invite:null };
+var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
 
 /* ---------------- 저장 ---------------- */
 function saveLocal(){
@@ -998,6 +1187,9 @@ function load(key){
       o.share = o.share || {url:'',id:''}; o.base = o.base || ''; o.me = o.me || '';
       o.catsAt = o.catsAt || 0; o.assetsAt = o.assetsAt || 0;
       o.cid = o.cid || '';
+      o.plans = (o.plans && typeof o.plans === 'object') ? o.plans : {};
+      o.people = Array.isArray(o.people) ? o.people : [];
+      o.kinds = Array.isArray(o.kinds) ? o.kinds : null; o.kindsAt = o.kindsAt || 0; o.kindsV = o.kindsV || 0;
       return o;
     }
   }catch(e){}
@@ -1631,7 +1823,7 @@ document.getElementById('hideTotalBtn').onclick = function(){
 /* 화면 탭 (이번 달 / 모은 돈 / 한눈에) */
 function setView(v){
   ui.view = v;
-  ['month','save','stats'].forEach(function(k){
+  ['month','save','stats','plan'].forEach(function(k){
     Array.prototype.forEach.call(document.querySelectorAll('.v-' + k), function(el){
       if(k === v) el.classList.remove('hidden'); else el.classList.add('hidden');
     });
@@ -1650,7 +1842,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.vtab'), function(b){
 
 /* 좌우 스와이프로 탭 이동 */
 (function(){
-  var VIEWS = ['month','save','stats'];
+  var VIEWS = ['month','save','stats','plan'];
   var sx=0, sy=0, st=0, track=false;
   function scrollableX(node){
     while(node && node !== document.body){
@@ -2286,6 +2478,562 @@ function buildCal(){
   box.appendChild(info);
 }
 
+/* ---------------- 일정 캘린더 (가계부와 별도) ---------------- */
+var PLAN_KINDS_DEF = [
+  { k:'일정',   e:'📌', c:'#2f80ff' },
+  { k:'경조사', e:'🤍', c:'#7b8495' },
+  { k:'생일',   e:'🎂', c:'#e8699f' },
+  { k:'친구',   e:'🧑‍🤝‍🧑', c:'#7c6cf0' },
+  { k:'여행',   e:'✈️', c:'#13a3b8' },
+  { k:'모임',   e:'🍻', c:'#eb8b28' },
+  { k:'기념일', e:'💝', c:'#e05a5a' },
+  { k:'육아',   e:'🍼', c:'#2bb673' },
+  { k:'학교',   e:'🏫', c:'#c2843a' },
+  { k:'회사',   e:'💼', c:'#546e8f' }
+];
+var KINDS_V = 2;
+var KIND_COLORS = ['#2f80ff','#e8699f','#13a3b8','#eb8b28','#7c6cf0','#e05a5a','#19a974','#7b8495'];
+var KIND_EMOS = ['📌','🎂','✈️','🍻','🧑‍🤝‍🧑','💝','🏥','🏫','💼','🎁','🐶','💪'];
+function planKinds(){
+  if(!Array.isArray(store.kinds) || !store.kinds.length){
+    store.kinds = PLAN_KINDS_DEF.map(function(o){ return { k:o.k, e:o.e, c:o.c }; });
+    store.kindsV = KINDS_V;
+  }else if((store.kindsV || 1) < KINDS_V){
+    PLAN_KINDS_DEF.forEach(function(o){
+      if(!store.kinds.some(function(x){ return x.k === o.k; })){
+        store.kinds.push({ k:o.k, e:o.e, c:o.c });
+      }
+    });
+    store.kindsV = KINDS_V;
+    store.kindsAt = Date.now();
+  }
+  return store.kinds;
+}
+function kindOf(k){
+  var ks = planKinds();
+  for(var i=0;i<ks.length;i++){ if(ks[i].k === k) return ks[i]; }
+  return ks[0];
+}
+function normPlans(){
+  if(!store.plans || typeof store.plans !== 'object') store.plans = {};
+  Object.keys(store.plans).forEach(function(key){
+    if(!Array.isArray(store.plans[key])){ store.plans[key] = []; return; }
+    var part = key.split('-'), ky = parseInt(part[0],10), km = parseInt(part[1],10);
+    store.plans[key].forEach(function(p){
+      if(!p) return;
+      if(!p.sd){                                   /* 옛 형식 {day,time} 변환 */
+        p.sd = dateStr(ky, km, p.day || 1);
+        p.ed = p.sd;
+        p.st = p.time || '';
+        p.et = '';
+      }
+      if(!p.ed) p.ed = p.sd;
+      if(p.ed < p.sd) p.ed = p.sd;
+      if(!p.kind) p.kind = '일정';
+      if(typeof p.st !== 'string') p.st = '';
+      if(typeof p.et !== 'string') p.et = '';
+    });
+  });
+}
+function plansOf(y, m){
+  normPlans();
+  var k = mkey(y, m);
+  if(!Array.isArray(store.plans[k])) store.plans[k] = [];
+  return store.plans[k];
+}
+function allPlans(){
+  normPlans();
+  var out = [];
+  Object.keys(store.plans).forEach(function(k){
+    (store.plans[k] || []).forEach(function(p){ if(p && p.sd) out.push(p); });
+  });
+  return out;
+}
+function plansOnISO(iso){
+  return allPlans().filter(function(p){ return p.sd <= iso && iso <= (p.ed || p.sd); })
+    .sort(function(a, b){
+      var ta = a.st || '99:99', tb = b.st || '99:99';
+      if(ta !== tb) return ta < tb ? -1 : 1;
+      return (a.at || 0) - (b.at || 0);
+    });
+}
+function planSpan(p){
+  var a = (p.sd || '').split('-'), b = (p.ed || p.sd || '').split('-');
+  var one = (p.sd === (p.ed || p.sd));
+  var txt = one
+    ? (+a[1]) + '월 ' + (+a[2]) + '일'
+    : (+a[1]) + '월 ' + (+a[2]) + '일 ~ ' + ((a[1] === b[1]) ? (+b[2]) + '일' : (+b[1]) + '월 ' + (+b[2]) + '일');
+  var t = '';
+  if(p.st && p.et) t = p.st + ' ~ ' + p.et;
+  else if(p.st) t = p.st;
+  return { date: txt, time: t, one: one };
+}
+function buildPlanKinds(){
+  var box = document.getElementById('planKinds');
+  if(!box) return;
+  var ks = planKinds();
+  if(!ui.planKind || !ks.some(function(o){ return o.k === ui.planKind; })) ui.planKind = ks[0].k;
+  box.innerHTML = '';
+  ks.forEach(function(o){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pk' + (o.k === ui.planKind ? ' on' : '');
+    if(o.k === ui.planKind) b.style.background = o.c;
+    b.innerHTML = '<span class="pke">' + o.e + '</span>' + escapeHtml(o.k)
+      + (ui.kindEdit ? '<span class="pkx">✕</span>' : '');
+    b.onclick = function(){
+      if(ui.kindEdit){
+        if(planKinds().length <= 1){ toast('종류는 하나 이상 있어야 해요'); return; }
+        store.kinds = planKinds().filter(function(x){ return x.k !== o.k; });
+        store.kindsAt = Date.now();
+        if(ui.planKind === o.k) ui.planKind = store.kinds[0].k;
+        saveLocal(); buildPlanKinds(); buildPlan();
+        return;
+      }
+      ui.planKind = o.k; buildPlanKinds();
+    };
+    box.appendChild(b);
+  });
+  var add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'pk pkadd';
+  add.innerHTML = '<span class="pke">＋</span>추가';
+  add.onclick = function(){
+    var bx = document.getElementById('newKindBox');
+    if(!bx) return;
+    bx.classList.toggle('hidden');
+    if(!bx.classList.contains('hidden')) buildKindEmos();
+  };
+  box.appendChild(add);
+}
+function buildKindEmos(){
+  var box = document.getElementById('newKindEmos');
+  if(!box) return;
+  if(!ui.newKindEmo) ui.newKindEmo = KIND_EMOS[0];
+  box.innerHTML = '';
+  KIND_EMOS.forEach(function(e){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = (e === ui.newKindEmo ? 'on' : '');
+    b.textContent = e;
+    b.onclick = function(){ ui.newKindEmo = e; buildKindEmos(); };
+    box.appendChild(b);
+  });
+}
+function planPeople(){
+  var out = [], push = function(n){
+    n = (n || '').trim();
+    if(n && out.indexOf(n) < 0) out.push(n);
+  };
+  push(store.me); push(store.name);
+  (sync.roster || []).forEach(push);
+  (store.people || []).forEach(push);
+  Object.keys(store.entries || {}).forEach(function(k){
+    (store.entries[k] || []).forEach(function(e){ push(e.by); });
+  });
+  Object.keys(store.plans || {}).forEach(function(k){
+    (store.plans[k] || []).forEach(function(p){ push(p.by); });
+  });
+  return out;
+}
+function buildPlanPeople(keep){
+  var sel = document.getElementById('planBy');
+  if(!sel) return;
+  var cur = keep || sel.value || store.me || store.name || '';
+  var list = planPeople();
+  sel.innerHTML = '';
+  list.forEach(function(n){
+    var o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    sel.appendChild(o);
+  });
+  var add = document.createElement('option');
+  add.value = '__new__'; add.textContent = '＋ 이름 추가';
+  sel.appendChild(add);
+  sel.value = (list.indexOf(cur) >= 0) ? cur : (list[0] || '');
+}
+function splitDT(v){
+  if(!v) return { d:'', t:'' };
+  var i = v.indexOf('T');
+  return i < 0 ? { d:v, t:'' } : { d:v.slice(0,i), t:v.slice(i+1, i+6) };
+}
+function setTimeMode(on, keep){
+  ui.planTimed = !!on;
+  var btn = document.getElementById('planTimeOn');
+  if(btn){
+    btn.className = 'p-clear2' + (on ? ' on' : '');
+    btn.textContent = on ? '시간 켬' : '시간 지정';
+  }
+  ['planSdt','planEdt'].forEach(function(id, i){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var v = splitDT(el.value);
+    var d = v.d || dateStr(store.year, ui.month, ui.planDay);
+    var t = (keep && keep[i]) || v.t || (i === 0 ? '09:00' : '10:00');
+    el.type = on ? 'datetime-local' : 'date';
+    el.value = on ? (d + 'T' + t) : d;
+  });
+}
+function syncPlanForm(){
+  var iso = dateStr(store.year, ui.month, ui.planDay);
+  setTimeMode(false);
+  var sd = document.getElementById('planSdt'), ed = document.getElementById('planEdt');
+  if(sd) sd.value = iso;
+  if(ed) ed.value = iso;
+  var sub = document.getElementById('planSheetSub');
+  if(sub) sub.textContent = ui.month + '월 ' + ui.planDay + '일에 추가돼요. 날짜는 아래에서 바꿀 수 있어요.';
+  buildPlanPeople();
+}
+function buildPlanCal(){
+  var box = document.getElementById('pcal');
+  if(!box) return;
+  var y = store.year, m = ui.month;
+  var last = daysIn(y, m);
+  var first = new Date(y, m-1, 1).getDay();
+  var weeks = Math.ceil((first + last) / 7);
+  var cells = weeks * 7;
+  var gridStart = new Date(y, m-1, 1 - first);
+  var DAY = 86400000;
+  function idxOf(iso){
+    var a = (iso || '').split('-');
+    if(a.length < 3) return -999;
+    var dt = new Date(+a[0], +a[1]-1, +a[2]);
+    return Math.round((dt - gridStart) / DAY);
+  }
+
+  var segs = [];
+  allPlans().forEach(function(p){
+    var si = idxOf(p.sd), ei = idxOf(p.ed || p.sd);
+    if(ei < 0 || si > cells - 1) return;
+    segs.push({ p:p, s:Math.max(0, si), e:Math.min(cells - 1, ei), len:(ei - si) });
+  });
+  segs.sort(function(a, b){
+    if(a.s !== b.s) return a.s - b.s;
+    if(a.len !== b.len) return b.len - a.len;
+    return (a.p.at || 0) - (b.p.at || 0);
+  });
+
+  document.getElementById('planTitle').textContent = m + '월 일정';
+
+  box.innerHTML = '';
+  var WD = ['일','월','화','수','목','금','토'];
+  var head = document.createElement('div');
+  head.className = 'pc-wd';
+  WD.forEach(function(w, i){
+    var sp = document.createElement('span');
+    sp.className = (i===0 ? 'sun' : (i===6 ? 'sat' : ''));
+    sp.textContent = w;
+    head.appendChild(sp);
+  });
+  box.appendChild(head);
+
+  var now = new Date();
+  var isThisMonth = (now.getFullYear() === y && now.getMonth()+1 === m);
+  if(ui.planDay > last) ui.planDay = last;
+
+  for(var w=0; w<weeks; w++){
+    var wk = document.createElement('div');
+    wk.className = 'pc-wk';
+
+    var drow = document.createElement('div');
+    drow.className = 'pc-days';
+    for(var c=0; c<7; c++){
+      var dn = w*7 + c - first + 1;
+      var inM = (dn >= 1 && dn <= last);
+      var cell = document.createElement(inM ? 'button' : 'div');
+      cell.className = 'pc-day' + (c===0 ? ' sun' : (c===6 ? ' sat' : ''))
+        + (inM && isThisMonth && dn === now.getDate() ? ' today' : '')
+        + (inM && dn === ui.planDay ? ' sel' : '');
+      cell.innerHTML = inM ? '<span class="n">' + dn + '</span>' : '<span class="n"></span>';
+      if(inM){
+        cell.onclick = (function(day){ return function(){
+          ui.planDay = day; buildPlanCal(); buildPlanList();
+        }; })(dn);
+      }
+      drow.appendChild(cell);
+    }
+    wk.appendChild(drow);
+
+    var lanes = document.createElement('div');
+    lanes.className = 'pc-lanes';
+    var used = [];                                    /* used[lane][col] */
+    var ws = w*7, we = ws + 6, any = false;
+    segs.forEach(function(sg){
+      var cs = Math.max(sg.s, ws), ce = Math.min(sg.e, we);
+      if(cs > ce) return;
+      var a = cs - ws, b = ce - ws, ln = 0;
+      while(true){
+        if(!used[ln]) used[ln] = [];
+        var free = true;
+        for(var i=a; i<=b; i++){ if(used[ln][i]) { free = false; break; } }
+        if(free) break;
+        ln++;
+      }
+      for(var i=a; i<=b; i++) used[ln][i] = 1;
+
+      var ko = kindOf(sg.p.kind);
+      var bar = document.createElement('button');
+      bar.className = 'pc-bar' + (sg.p.done ? ' done' : '');
+      bar.style.gridColumn = (a+1) + ' / ' + (b+2);
+      bar.style.gridRow = (ln+1);
+      bar.style.background = ko.c + '26';
+      bar.style.color = ko.c;
+      bar.innerHTML = '<span>' + escapeHtml(sg.p.text) + '</span>';
+      bar.onclick = (function(dayIdx){ return function(e){
+        e.stopPropagation();
+        var dn = dayIdx - first + 1;
+        if(dn >= 1 && dn <= last){ ui.planDay = dn; buildPlanCal(); buildPlanList(); }
+      }; })(cs);
+      lanes.appendChild(bar);
+      any = true;
+    });
+    if(any) wk.appendChild(lanes);
+    box.appendChild(wk);
+  }
+}
+var ICON_PEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+var ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+function removePlan(p){
+  Object.keys(store.plans || {}).forEach(function(k){
+    store.plans[k] = (store.plans[k] || []).filter(function(x){ return x.id !== p.id; });
+  });
+  store.tomb = store.tomb || {};
+  store.tomb[p.id] = Date.now();
+  save();
+  buildPlanCal(); buildPlanList();
+  toast('일정을 삭제했어요');
+}
+function minOf(t){
+  var a = (t || '').split(':');
+  if(a.length < 2) return -1;
+  return (+a[0]) * 60 + (+a[1]);
+}
+function hhmm(min){
+  min = Math.max(0, Math.min(24*60, min));
+  return ('0' + Math.floor(min/60)).slice(-2) + ':' + ('0' + (min%60)).slice(-2);
+}
+function planRow(p, ko, sp){
+  var sub = [];
+  if(!sp.one) sub.push(sp.date);
+  if(p.by) sub.push('<span class="pw">' + escapeHtml(p.by) + '</span>');
+  return sub.join(' · ');
+}
+function bindPlanBtns(el, p){
+  var chk = el.querySelector('.ev-chk') || el.querySelector('.ad-chk');
+  if(chk) chk.onclick = function(e){
+    e.stopPropagation();
+    p.done = !p.done; p.at = Date.now();
+    save(); buildPlanList();
+  };
+  var del = el.querySelector('.del');
+  if(del) del.onclick = function(e){
+    e.stopPropagation();
+    if(!confirm('이 일정을 삭제할까요?')) return;
+    Object.keys(store.plans).forEach(function(k){
+      store.plans[k] = (store.plans[k] || []).filter(function(x){ return x.id !== p.id; });
+    });
+    store.tomb = store.tomb || {}; store.tomb[p.id] = Date.now();
+    save(); buildPlanCal(); buildPlanList(); toast('삭제했어요');
+  };
+}
+function buildPlanList(){
+  var box = document.getElementById('planList');
+  if(!box) return;
+  var y = store.year, m = ui.month, d = ui.planDay;
+  var iso = dateStr(y, m, d);
+  document.getElementById('planDayTitle').textContent = m + '월 ' + d + '일 일정';
+  var cntEl = document.getElementById('planDayCnt');
+  var arr = plansOnISO(iso);
+  if(cntEl) cntEl.textContent = arr.length + '개';
+  box.innerHTML = '';
+  if(!arr.length){
+    box.innerHTML = '<div class="empty"><span class="e">🗓️</span>이 날은 일정이 없어요</div>';
+    return;
+  }
+
+  var wrap = document.createElement('div');
+  wrap.className = 'tl2';
+
+  arr.forEach(function(p){
+    var ko = kindOf(p.kind), sp = planSpan(p);
+    var row = document.createElement('div');
+    row.className = 't2-row' + (p.done ? ' done' : '');
+
+    var tm = p.st
+      ? '<b>' + p.st + '</b>' + (p.et ? '<span>' + p.et + '</span>' : '')
+      : '<b>종일</b>';
+
+    var meta = [];
+    if(!sp.one) meta.push(sp.date);
+    if(p.by) meta.push('<span class="pw">' + escapeHtml(p.by) + '</span>');
+
+    row.innerHTML =
+      '<div class="t2-time">' + tm + '</div>' +
+      '<div class="t2-bar" style="background:' + ko.c + '1a">' +
+        '<span class="t2-emo">' + ko.e + '</span>' +
+        '<div class="t2-tx"><b>' + escapeHtml(p.text) + '</b>' +
+          (meta.length ? '<span>' + meta.join(' · ') + '</span>' : '') +
+        '</div>' +
+        '<button class="t2-chk" aria-label="완료">' + (p.done ? '✓' : '') + '</button>' +
+        '<button class="t2-ic edit" aria-label="수정">' + ICON_PEN + '</button>' +
+        '<button class="t2-ic del" aria-label="삭제">' + ICON_X + '</button>' +
+      '</div>';
+
+    row.querySelector('.t2-chk').onclick = function(e){
+      e.stopPropagation();
+      p.done = !p.done; p.at = Date.now();
+      save(); buildPlanList();
+    };
+    row.querySelector('.edit').onclick = function(e){
+      e.stopPropagation();
+      openPlanSheet(p);
+    };
+    row.querySelector('.del').onclick = function(e){
+      e.stopPropagation();
+      removePlan(p);
+    };
+    wrap.appendChild(row);
+  });
+  box.appendChild(wrap);
+}
+function buildPlan(){ buildPlanCal(); buildPlanList(); }
+var openPlanSheet = function(){};
+
+(function(){
+  var btn = document.getElementById('planAdd');
+  if(!btn) return;
+  var $ = function(id){ return document.getElementById(id); };
+  var bg = $('planBg');
+
+  function openSheet(p){
+    ui.planEdit = p ? p.id : null;
+    if(p){
+      ui.planKind = p.kind || '일정';
+      buildPlanKinds();
+      buildPlanPeople(p.by);
+      var timed = !!p.st;
+      $('planSdt').type = 'date'; $('planEdt').type = 'date';
+      $('planSdt').value = p.sd;
+      $('planEdt').value = p.ed || p.sd;
+      setTimeMode(timed, [p.st || '09:00', p.et || p.st || '10:00']);
+      $('planText').value = p.text || '';
+      $('planSheetSub').textContent = '일정을 고치고 저장해 주세요.';
+    }else{
+      buildPlanKinds();
+      syncPlanForm();
+      $('planText').value = '';
+    }
+    $('newByBox').classList.add('hidden');
+    document.querySelector('#planBg h3').textContent = p ? '✏️ 일정 수정' : '🗓️ 일정 추가';
+    btn.textContent = p ? '저장하기' : '추가하기';
+    bg.classList.remove('hidden');
+  }
+  function closeSheet(){ ui.planEdit = null; bg.classList.add('hidden'); }
+  openPlanSheet = openSheet;
+
+  $('planNew').onclick = function(){ openSheet(null); };
+  $('planCancel').onclick = closeSheet;
+  bg.onclick = function(e){ if(e.target === bg) closeSheet(); };
+
+  $('planBy').onchange = function(){
+    var box = $('newByBox');
+    if(this.value !== '__new__'){ box.classList.add('hidden'); return; }
+    buildPlanPeople();
+    box.classList.remove('hidden');
+    $('newByName').value = '';
+    try{ $('newByName').focus(); }catch(e){}
+  };
+  $('newByAdd').onclick = function(){
+    var n = ($('newByName').value || '').trim();
+    if(!n){ $('newByName').focus(); toast('이름을 적어주세요'); return; }
+    store.people = store.people || [];
+    if(store.people.indexOf(n) < 0) store.people.push(n);
+    saveLocal();
+    buildPlanPeople(n);
+    $('newByBox').classList.add('hidden');
+    toast('이름을 추가했어요');
+  };
+
+  btn.onclick = function(){
+    var txt = ($('planText').value || '').trim();
+    if(!txt){ $('planText').focus(); toast('일정 내용을 적어주세요 ✏️'); return; }
+    var a = splitDT($('planSdt').value), b = splitDT($('planEdt').value);
+    var sd = a.d || dateStr(store.year, ui.month, ui.planDay);
+    var ed = b.d || sd;
+    var st = ui.planTimed ? (a.t || '') : '';
+    var et = ui.planTimed ? (b.t || '') : '';
+    if(ed < sd){ var t = sd; sd = ed; ed = t; var t3 = st; st = et; et = t3; }
+    if(sd === ed && st && et && et < st){ var t2 = st; st = et; et = t2; }
+    var who = $('planBy').value;
+    if(who === '__new__') who = store.me || store.name || '';
+    var part = sd.split('-');
+    if(ui.planEdit){
+      var old = null;
+      Object.keys(store.plans || {}).forEach(function(k){
+        (store.plans[k] || []).forEach(function(x){ if(x.id === ui.planEdit) old = x; });
+      });
+      if(old){
+        var moved = (old.sd.slice(0,7) !== sd.slice(0,7));
+        var keep = old.done, kid = old.id;
+        if(moved){
+          Object.keys(store.plans).forEach(function(k){
+            store.plans[k] = (store.plans[k] || []).filter(function(x){ return x.id !== kid; });
+          });
+          plansOf(parseInt(part[0],10), parseInt(part[1],10)).push({
+            id: kid, sd: sd, ed: ed, st: st, et: et,
+            kind: ui.planKind || '일정', text: txt, done: keep,
+            by: who, at: Date.now()
+          });
+        }else{
+          old.sd = sd; old.ed = ed; old.st = st; old.et = et;
+          old.kind = ui.planKind || '일정'; old.text = txt; old.by = who; old.at = Date.now();
+        }
+      }
+    }else{
+      plansOf(parseInt(part[0],10), parseInt(part[1],10)).push({
+        id: rid(12), sd: sd, ed: ed, st: st, et: et,
+        kind: ui.planKind || '일정', text: txt, done: false,
+        by: who, at: Date.now()
+      });
+    }
+    var wasEdit = !!ui.planEdit;
+    save();
+    closeSheet();
+    var np = sd.split('-');
+    ui.month = parseInt(np[1],10);
+    ui.planDay = parseInt(np[2],10);
+    render();
+    toast(wasEdit ? '일정을 수정했어요 ✏️' : '일정을 추가했어요 🗓️');
+  };
+  $('planText').addEventListener('keydown', function(e){ if(e.key === 'Enter') btn.click(); });
+  $('planSdt').addEventListener('change', function(){
+    var ed = $('planEdt');
+    if(!ed.value || ed.value < this.value) ed.value = this.value;
+  });
+  $('planTimeOn').onclick = function(){ setTimeMode(!ui.planTimed); };
+  $('kindEdit').onclick = function(){
+    ui.kindEdit = !ui.kindEdit;
+    this.className = 'p-clear2' + (ui.kindEdit ? ' on' : '');
+    this.textContent = ui.kindEdit ? '완료' : '편집';
+    if(ui.kindEdit) toast('지울 종류를 누르세요');
+    buildPlanKinds();
+  };
+  $('newKindAdd').onclick = function(){
+    var nm = ($('newKindName').value || '').trim();
+    if(!nm){ $('newKindName').focus(); toast('종류 이름을 적어주세요'); return; }
+    var ks = planKinds();
+    if(ks.some(function(x){ return x.k === nm; })){ toast('이미 있는 종류예요'); return; }
+    ks.push({ k:nm, e: ui.newKindEmo || KIND_EMOS[0], c: KIND_COLORS[ks.length % KIND_COLORS.length] });
+    store.kindsAt = Date.now();
+    ui.planKind = nm;
+    $('newKindName').value = '';
+    document.getElementById('newKindBox').classList.add('hidden');
+    saveLocal(); buildPlanKinds(); buildPlan();
+    toast('종류를 추가했어요');
+  };
+
+})();
+
 /* ---------------- 연간표 ---------------- */
 function buildYear(){
   var tb = document.getElementById('ybody'), tf = document.getElementById('yfoot');
@@ -2332,7 +3080,7 @@ function render(){
     ? ('수입 ' + won(s.inc) + '원 − 지출 ' + won(s.out) + '원 − 적금 ' + won(s.save) + '원')
     : '수입을 입력하면 남은 금액이 자동 계산돼요';
 
-  buildMonths(); buildAlerts(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); syncAdd();
+  buildMonths(); buildAlerts(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); buildPlan(); syncAdd();
 }
 
 /* ---------------- 설정 ---------------- */
@@ -2439,7 +3187,7 @@ document.getElementById('goalSaveBtn').onclick = function(){
 
 /* ================= 공유 · 공동작성 (Firebase) ================= */
 var SHARE_BASE = '';   /* 게시된 웹 주소 */
-var sync = { on:false, timer:null, pushT:null, lastPres:0, status:'off', peers:1, busy:false };
+var sync = { on:false, timer:null, pushT:null, lastPres:0, status:'off', peers:1, busy:false , roster:[] };
 
 function dbRoot(){ return (store.share.url||'').replace(/\/+$/,''); }
 function bookUrl(){ return dbRoot() + '/books/' + store.share.id + '.json'; }
@@ -2457,7 +3205,31 @@ function localBook(){
            goal:store.goal||0, goalAt:store.goalAt||0,
            cats:store.cats, catsAt:store.catsAt||0,
            assets:store.assets, assetsAt:store.assetsAt||0,
-           entries:ent, tomb:store.tomb||{}, updatedAt:Date.now() };
+           entries:ent, plans:packPlans(store.plans),
+           kinds:store.kinds||null, kindsAt:store.kindsAt||0,
+           tomb:store.tomb||{}, updatedAt:Date.now() };
+}
+function packPlans(src){
+  var out = {};
+  Object.keys(src || {}).forEach(function(k){
+    var o = {};
+    (src[k] || []).forEach(function(p){ if(p && p.id) o[p.id] = p; });
+    if(Object.keys(o).length) out[k] = o;
+  });
+  return out;
+}
+function mergeMap(a, b, tomb){
+  var keys = {}, out = {};
+  Object.keys(a || {}).forEach(function(k){ keys[k]=1; });
+  Object.keys(b || {}).forEach(function(k){ keys[k]=1; });
+  Object.keys(keys).forEach(function(k){
+    var m = {};
+    [(b||{})[k]||{}, (a||{})[k]||{}].forEach(function(src){
+      Object.keys(src).forEach(function(id){ if(!tomb[id]) m[id] = src[id]; });
+    });
+    if(Object.keys(m).length) out[k] = m;
+  });
+  return out;
 }
 function sig(ent){
   var out = [];
@@ -2499,7 +3271,10 @@ function mergeBook(a, b){
     year: bNewerName ? (b.year||a.year) : a.year,
     goal: bNewerGoal ? (b.goal||0) : (a.goal||0),
     goalAt: Math.max(a.goalAt||0, b.goalAt||0),
-    entries: ent, tomb: tomb, updatedAt: Date.now()
+    entries: ent, plans: mergeMap(a.plans, b.plans, tomb),
+    kinds: ((b.kindsAt||0) > (a.kindsAt||0) && b.kinds) ? b.kinds : (a.kinds || b.kinds || null),
+    kindsAt: Math.max(a.kindsAt||0, b.kindsAt||0),
+    tomb: tomb, updatedAt: Date.now()
   };
 }
 function applyBook(bk){
@@ -2520,6 +3295,14 @@ function applyBook(bk){
     }).sort(function(x,y){ return (x.at||0)-(y.at||0); });
   });
   store.entries = ent;
+  var pl = {};
+  Object.keys(bk.plans||{}).forEach(function(k){
+    pl[k] = Object.keys(bk.plans[k]).map(function(id){
+      var p = bk.plans[k][id]; p.id = id; return p;
+    });
+  });
+  store.plans = pl;
+  if(Array.isArray(bk.kinds) && bk.kinds.length){ store.kinds = bk.kinds; store.kindsAt = bk.kindsAt || 0; }
 }
 function jfetch(url, opt){
   if(typeof fetch !== 'function') return Promise.reject(new Error('no-fetch'));
@@ -2576,8 +3359,13 @@ function presenceTick(){
   if(now - (sync.lastRead||0) < 8000) return;
   sync.lastRead = now;
   jfetch(whoUrl()).then(function(w){
-    var n = 0, t = Date.now();
-    Object.keys(w||{}).forEach(function(k){ if(t - ((w[k]||{}).t||0) < 70000) n++; });
+    var n = 0, t = Date.now(), names = [];
+    Object.keys(w||{}).forEach(function(k){
+      var o = w[k] || {};
+      if(o.n && names.indexOf(o.n) < 0) names.push(o.n);
+      if(t - (o.t||0) < 70000) n++;
+    });
+    sync.roster = names;
     sync.peers = Math.max(1, n); paintStatus();
   }).catch(function(){});
 }
