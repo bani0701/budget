@@ -173,6 +173,14 @@
   @keyframes swR{from{opacity:.35;transform:translateX(-26px)}to{opacity:1;transform:none}}
   .view.sw-l{animation:swL .22s ease-out}
   .view.sw-r{animation:swR .22s ease-out}
+  .pcal.sw-l{animation:swL .22s ease-out}
+  .pcal.sw-r{animation:swR .22s ease-out}
+  .pmv{width:24px;height:24px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+    padding:0;border:0;background:none;color:#4b5563;font-size:20px;font-weight:700;
+    line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .pmv:active{color:var(--ink)}
+  .pmv[disabled]{opacity:.25}
+  #planTitle{min-width:34px;text-align:center}
   .hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .hero-label{font-size:12.5px;opacity:.85;font-weight:700}
   .mini.dday{background:#fff;color:var(--primary);opacity:1;font-variant-numeric:tabular-nums;flex:0 0 auto}
@@ -915,7 +923,12 @@
       <div class="view v-plan hidden">
       <div class="card">
         <div class="card-h">
-          <div class="card-t" id="planTitle">10월 일정</div>
+          <div class="card-t">
+            <button class="pmv" id="planPrev" aria-label="이전 달">‹</button>
+            <span id="planTitle">10월</span>
+            <button class="pmv" id="planNext" aria-label="다음 달">›</button>
+            <span>일정</span>
+          </div>
           <button class="mini pplus" id="planNew">일정 추가</button>
         </div>
         <div class="pcal" id="pcal"></div>
@@ -1922,13 +1935,20 @@ Array.prototype.forEach.call(document.querySelectorAll('.vtab'), function(b){
     }
     return false;
   }
+  function inPcal(node){
+    while(node && node !== document.body){
+      if(node.id === 'pcal') return true;
+      node = node.parentNode;
+    }
+    return false;
+  }
   var main = document.querySelector('main') || document.getElementById('app');
   if(!main) return;
   main.addEventListener('touchstart', function(e){
     if(e.touches.length !== 1){ track=false; return; }
     var t = e.touches[0], el = t.target;
     var tag = (el.tagName || '').toLowerCase();
-    if(tag === 'input' || tag === 'textarea' || tag === 'select' || scrollableX(el)){ track=false; return; }
+    if(tag === 'input' || tag === 'textarea' || tag === 'select' || scrollableX(el) || inPcal(el)){ track=false; return; }
     sx = t.clientX; sy = t.clientY; st = Date.now(); track = true;
   }, { passive:true });
   main.addEventListener('touchend', function(e){
@@ -2878,7 +2898,10 @@ function buildPlanCal(){
     return (a.p.at || 0) - (b.p.at || 0);
   });
 
-  document.getElementById('planTitle').textContent = m + '월 일정';
+  document.getElementById('planTitle').textContent = m + '월';
+  var pv = document.getElementById('planPrev'), nx = document.getElementById('planNext');
+  if(pv) pv.disabled = (m <= 1);
+  if(nx) nx.disabled = (m >= 12);
 
   box.innerHTML = '';
   var WD = ['일','월','화','수','목','금','토'];
@@ -3182,6 +3205,41 @@ var openPlanSheet = function(){};
   openPlanSheet = openSheet;
 
   $('planNew').onclick = function(){ openSheet(null); };
+
+  /* 달력 월 이동 (화살표 · 스와이프) */
+  function goPlanMonth(d){
+    var m = ui.month + d;
+    if(m < 1 || m > 12) return;
+    ui.month = m;
+    var now = new Date();
+    ui.planDay = (store.year === now.getFullYear() && m === now.getMonth()+1) ? now.getDate() : 1;
+    ui.listLimit = LIST_STEP;
+    render(); syncDateIn();
+    var pc = $('pcal');
+    if(pc){ pc.classList.remove('sw-l','sw-r'); void pc.offsetWidth; pc.classList.add(d > 0 ? 'sw-l' : 'sw-r'); }
+  }
+  $('planPrev').onclick = function(){ goPlanMonth(-1); };
+  $('planNext').onclick = function(){ goPlanMonth(1); };
+
+  (function(){
+    var pc = $('pcal');
+    if(!pc) return;
+    var sx = 0, sy = 0, st = 0, tr = false;
+    pc.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1){ tr = false; return; }
+      var t = e.touches[0];
+      sx = t.clientX; sy = t.clientY; st = Date.now(); tr = true;
+    }, { passive:true });
+    pc.addEventListener('touchend', function(e){
+      if(!tr) return;
+      tr = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - sx, dy = t.clientY - sy;
+      if(Date.now() - st > 700) return;
+      if(Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+      goPlanMonth(dx < 0 ? 1 : -1);
+    }, { passive:true });
+  })();
 
   (function(){
     var pb = $('planActBg');
