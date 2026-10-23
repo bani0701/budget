@@ -420,6 +420,13 @@
 
   /* 리스트 */
   .item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .item .nm{cursor:pointer}
+  .item .nm:active b,.item .nm:active span{opacity:.55}
+  .it-amt{font-size:26px;font-weight:900;letter-spacing:-.6px;margin:2px 0 12px}
+  .it-memo{background:var(--bg);border-radius:14px;padding:14px 15px;margin-bottom:22px;font-size:13.5px;
+    font-weight:600;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-all;
+    min-height:20px;max-height:36vh;overflow:auto}
+  .it-memo.none{color:var(--sub);font-weight:700}
   .item:last-child{border-bottom:none}
   .item .ic2{width:38px;height:38px;border-radius:12px;background:#f1f4f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto}
   .item .nm{flex:1;min-width:0}
@@ -873,7 +880,7 @@
           <button class="q" data-add="100000">+10만</button>
           <button class="q" data-add="0">초기화</button>
         </div>
-        <input class="memo" id="memoIn" placeholder="메모 (선택) 예) 점심 김치찌개" maxlength="30">
+        <input class="memo" id="memoIn" placeholder="메모 (선택) 예) 점심 김치찌개" maxlength="60">
         <button class="add out" id="addBtn" disabled>카테고리를 선택해 주세요</button>
       </div>
 
@@ -1083,6 +1090,21 @@
         <button class="sbtn" id="paAlarm">🔔 알림 설정</button>
         <button class="sbtn warn" id="paDel">🗑️ 삭제하기</button>
         <button class="sbtn" id="paClose">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 내역 자세히 -->
+  <div class="sheet-bg hidden" id="itemBg">
+    <div class="sheet">
+      <h3 id="itTitle">내역</h3>
+      <p id="itSub"></p>
+      <div class="it-amt" id="itAmt">0원</div>
+      <span class="p-lab2" style="margin-top:4px">메모</span>
+      <div class="it-memo" id="itMemo"></div>
+      <div class="srow abtns">
+        <button class="sbtn warn" id="itDel">🗑️ 삭제하기</button>
+        <button class="sbtn main" id="itClose">닫기</button>
       </div>
     </div>
   </div>
@@ -2488,7 +2510,11 @@ function buildList(){
       '<div class="nm"><b>'+e.cat+'</b><span>'+tag+(e.memo?' · '+escapeHtml(e.memo):'')+'</span></div>'+
       '<div class="am '+color+'">'+sign+won(e.amount)+'</div>'+
       '<button class="del">✕</button>';
-    d.querySelector('.del').onclick = function(){
+    d.querySelector('.nm').onclick = function(){ openItem(e); };
+    d.querySelector('.ic2').onclick = function(){ openItem(e); };
+    d.querySelector('.am').onclick = function(){ openItem(e); };
+    d.querySelector('.del').onclick = function(ev){
+      ev.stopPropagation();
       if(!confirm(e.cat + ' ' + won(e.amount) + '원 내역을 삭제할까요?')) return;
       var k = mkey(store.year, ui.month);
       store.entries[k] = store.entries[k].filter(function(x){ return x.id !== e.id; });
@@ -2512,6 +2538,45 @@ function buildList(){
     box.appendChild(fold);
   }
 }
+/* 내역 하나를 아래 팝업으로 자세히 보기 */
+function openItem(e){
+  var bg = document.getElementById('itemBg');
+  if(!bg) return;
+  ui.itemView = e;
+  var dnum = entryDay(e);
+  var tag = e.type === 'expense' ? '지출' : (e.type === 'saving' ? '적금' : '입금');
+  var sign = e.type === 'expense' ? '-' : '+';
+  var color = e.type === 'expense' ? 'c-out' : (e.type === 'saving' ? 'c-save' : 'c-in');
+  var bits = [];
+  if(dnum) bits.push(ui.month + '월 ' + dnum + '일');
+  bits.push(tag);
+  if(e.by) bits.push('👤 ' + e.by);
+  document.getElementById('itTitle').textContent = (EMOJI[e.cat] || '•') + ' ' + e.cat;
+  document.getElementById('itSub').textContent = bits.join(' · ');
+  var amt = document.getElementById('itAmt');
+  amt.className = 'it-amt ' + color;
+  amt.textContent = sign + won(e.amount) + '원';
+  var memo = document.getElementById('itMemo');
+  if(e.memo){ memo.className = 'it-memo'; memo.textContent = e.memo; }
+  else { memo.className = 'it-memo none'; memo.textContent = '메모가 없어요'; }
+  bg.classList.remove('hidden');
+}
+(function(){
+  var bg = document.getElementById('itemBg');
+  if(!bg) return;
+  var close = function(){ ui.itemView = null; bg.classList.add('hidden'); };
+  document.getElementById('itClose').onclick = close;
+  bg.onclick = function(ev){ if(ev.target === bg) close(); };
+  document.getElementById('itDel').onclick = function(){
+    var e = ui.itemView;
+    if(!e) return;
+    Object.keys(store.entries || {}).forEach(function(k){
+      store.entries[k] = (store.entries[k] || []).filter(function(x){ return x.id !== e.id; });
+    });
+    store.tomb = store.tomb || {}; store.tomb[e.id] = Date.now();
+    close(); save(); render(); toast('삭제했어요');
+  };
+})();
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -2689,7 +2754,19 @@ function occStart(sd, rep, n){
 }
 function expandPlan(p, from, to){
   var out = [], span = Math.max(0, dayDiff(p.sd, p.ed || p.sd));
-  for(var n=0; n<400; n++){
+  /* 보여줄 기간 근처부터 세기 시작 (오래된 반복도 빠짐없이) */
+  var n0 = 0, gap = dayDiff(p.sd, from) - span;
+  if(gap > 0){
+    if(p.rep === 'd') n0 = gap;
+    else if(p.rep === 'w') n0 = Math.floor(gap / 7);
+    else{
+      var fa = from.split('-'), sa = p.sd.split('-');
+      var mo = (+fa[0] - +sa[0]) * 12 + (+fa[1] - +sa[1]);
+      n0 = Math.max(0, (p.rep === 'm' ? mo : Math.floor(mo / 12)) - 1);
+    }
+    n0 = Math.max(0, n0);
+  }
+  for(var n=n0; n<n0+400; n++){
     var s = occStart(p.sd, p.rep, n);
     if(s > to) break;
     if(p.ru && s > p.ru) break;
