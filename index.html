@@ -425,6 +425,24 @@
   .item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
   .item .nm{cursor:pointer}
   .item .nm:active b,.item .nm:active span{opacity:.55}
+  .fx-row{display:flex;align-items:center;gap:10px;width:100%;padding:11px 0;margin:0;border:0;
+    border-bottom:1px solid var(--line);border-radius:0;background:none;text-align:left;
+    font-family:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fx-row:active{opacity:.6}
+  .fx-row:last-child{border-bottom:0}
+  .fx-row .e{font-size:17px;flex:0 0 auto}
+  .fx-row .nm{flex:1;min-width:0}
+  .fx-row .nm b{display:block;font-size:13.5px;font-weight:800}
+  .fx-row .nm span{display:block;font-size:11.5px;font-weight:700;color:var(--sub);margin-top:1px}
+  .fx-row .am{font-size:13.5px;font-weight:900;white-space:nowrap}
+  .budhint{display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:12px;
+    padding:9px 12px;font-size:12px;font-weight:800;color:var(--sub);line-height:1.3}
+  .budhint b{color:var(--ink);font-weight:900}
+  .budhint .ar{color:#c6ccd6;font-weight:900}
+  .budhint.warn{background:#fff6e9;color:#b9770c}
+  .budhint.warn b{color:#b9770c}
+  .budhint.over{background:#fdeee9;color:var(--expense)}
+  .budhint.over b{color:var(--expense)}
   .budline{display:flex;align-items:center;gap:9px;width:100%;margin:0;background:var(--card);border:0;
     border-radius:16px;padding:0 14px;height:48px;box-shadow:var(--shadow);font-family:inherit;
     font-size:12.5px;font-weight:800;color:var(--ink);text-align:left;cursor:pointer;
@@ -818,6 +836,14 @@
         <div id="budBody"></div>
       </div>
 
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t">매달 나가는 돈</div>
+          <button class="mini" id="fxAdd">＋ 추가</button>
+        </div>
+        <div id="fxBody"></div>
+      </div>
       </div><!-- /예산 탭 -->
 
       <!-- ===== 탭2 · 모은 돈 ===== -->
@@ -936,6 +962,7 @@
             </div>
           </div>
         </div>
+        <div class="budhint hidden" id="budHint"></div>
         <div class="quick">
           <button class="q" data-add="1000">+1천</button>
           <button class="q" data-add="10000">+1만</button>
@@ -1157,6 +1184,41 @@
     </div>
   </div>
 
+  <!-- 매달 나가는 돈 -->
+  <div class="sheet-bg hidden" id="fxBg">
+    <div class="sheet sheet-scroll">
+      <h3 id="fxH3">🔁 매달 나가는 돈</h3>
+      <p>월세·통신비처럼 매달 똑같이 나가는 돈을 등록하면 그 날짜에 자동으로 기록돼요.</p>
+
+      <span class="p-lab2" style="margin-top:6px">종류</span>
+      <div class="tabs">
+        <button class="tab on out" id="fxTabOut" type="button">지출</button>
+        <button class="tab inc" id="fxTabIn" type="button">입금</button>
+      </div>
+
+      <span class="p-lab2">카테고리</span>
+      <div class="p-kinds" id="fxCats"></div>
+
+      <div class="p-form" style="margin-top:14px">
+        <span class="p-tag2">금액</span>
+        <input class="p-text" id="fxAmt" inputmode="numeric" placeholder="0">
+      </div>
+      <div class="p-form">
+        <span class="p-tag2">날짜</span>
+        <select class="p-name" id="fxDay"></select>
+      </div>
+
+      <span class="p-lab2">메모</span>
+      <input class="p-text" id="fxMemo" placeholder="예) 아파트 관리비" maxlength="30">
+
+      <div class="srow" style="margin-top:18px">
+        <button class="sbtn warn hidden" id="fxDel">🗑️ 삭제</button>
+        <button class="sbtn" id="fxCancel">취소</button>
+        <button class="sbtn main" id="fxSave">저장하기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 한 달 예산 설정 -->
   <div class="sheet-bg hidden" id="budBg">
     <div class="sheet sheet-scroll">
@@ -1374,6 +1436,8 @@ function load(key){
       o.tomb = o.tomb || {}; o.nameAt = o.nameAt||0; o.goalAt = o.goalAt||0;
       o.share = o.share || {url:'',id:''}; o.base = o.base || ''; o.me = o.me || '';
       o.catsAt = o.catsAt || 0; o.assetsAt = o.assetsAt || 0;
+      if(!Array.isArray(o.fixed)) o.fixed = [];
+      o.fixedAt = o.fixedAt || 0;
       if(!o.budget || typeof o.budget !== 'object') o.budget = {};
       if(!o.budgetM || typeof o.budgetM !== 'object') o.budgetM = {};
       o.budgetAt = o.budgetAt || 0;
@@ -1495,6 +1559,7 @@ document.getElementById('loadBtn').onclick = function(){
 function openMain(){
   document.getElementById('gate').classList.add('hidden');
   document.getElementById('main').classList.remove('hidden');
+  if(applyFixed()) saveLocal();
   buildCats(); render(); syncDateIn();
   if(store.share && store.share.url && store.share.id) startSync(); else paintStatus();
   window.scrollTo(0,0);
@@ -1609,7 +1674,33 @@ function readDateIn(){
   return { y:y, m:mo, d:d };
 }
 
+/* 입력하는 동안 그 카테고리 남은 예산 보여주기 */
+function paintBudHint(){
+  var el = document.getElementById('budHint');
+  if(!el) return;
+  var bud = budFor(store.year, ui.month);
+  var lim = ui.cat ? (+bud[ui.cat] || 0) : 0;
+  if(ui.tab !== 'expense' || !ui.cat || lim <= 0){ el.className = 'budhint hidden'; return; }
+
+  var usedC = 0;
+  list(store.year, ui.month).forEach(function(e){
+    if(e.type === 'expense' && e.cat === ui.cat) usedC += e.amount;
+  });
+  var typing = parseInt((document.getElementById('amtIn').value || '').replace(/[^0-9]/g,''), 10) || 0;
+  var now = lim - usedC, after = now - typing;
+  var tgt = typing > 0 ? after : now;
+  var cls = tgt < 0 ? ' over' : (tgt < lim * 0.2 ? ' warn' : '');
+
+  var txt = (EMOJI[ui.cat] || '•') + ' ' + escapeHtml(ui.cat) + ' <b>' + won(Math.abs(now)) + '원</b> ' +
+            (now < 0 ? '초과' : '남음');
+  if(typing > 0){
+    txt += ' <span class="ar">→</span> <b>' + won(Math.abs(after)) + '원</b> ' + (after < 0 ? '초과' : '남음');
+  }
+  el.className = 'budhint' + cls;
+  el.innerHTML = txt;
+}
 function syncAdd(){
+  paintBudHint();
   var btn = document.getElementById('addBtn');
   var amt = parseInt(document.getElementById('amtIn').value.replace(/[^0-9]/g,''),10) || 0;
   var isSave = (ui.cat===SAVE_CAT && ui.tab==='income');
@@ -2896,6 +2987,179 @@ var openBudget = function(){};
   if(be) be.onclick = openBudget;
 })();
 
+/* ---------------- 매달 나가는 돈(고정비) ---------------- */
+function fixedList(){
+  if(!Array.isArray(store.fixed)) store.fixed = [];
+  return store.fixed;
+}
+function fxDayOf(y, m, d){
+  var last = daysIn(y, m);
+  return (!d || d > last) ? last : d;         /* 0 또는 말일 넘으면 그 달 마지막 날 */
+}
+/* 등록한 달부터 이번 달까지, 날짜가 지난 것만 내역에 넣어줌 */
+function applyFixed(){
+  var rules = fixedList();
+  if(!rules.length) return false;
+  var now = new Date();
+  var ny = now.getFullYear(), nm = now.getMonth() + 1, nd = now.getDate();
+  var added = 0;
+  store.tomb = store.tomb || {};
+  rules.forEach(function(r){
+    if(!r || !r.id || !(r.amount > 0) || !r.cat) return;
+    var fa = (r.fm || '').split('-');
+    var sy = parseInt(fa[0], 10), sm = parseInt(fa[1], 10);
+    if(!sy || !sm) return;
+    for(var y = sy; y <= ny; y++){
+      var m1 = (y === sy) ? sm : 1, m2 = (y === ny) ? nm : 12;
+      for(var m = m1; m <= m2; m++){
+        var day = fxDayOf(y, m, r.day);
+        if(y === ny && m === nm && day > nd) continue;      /* 아직 안 온 날 */
+        var key = mkey(y, m);
+        var eid = 'fx' + r.id + '_' + y + ('0' + m).slice(-2);
+        if(store.tomb[eid]) continue;                        /* 지운 건 다시 안 넣음 */
+        if(!Array.isArray(store.entries[key])) store.entries[key] = [];
+        var dup = store.entries[key].some(function(e){ return e && e.id === eid; });
+        if(dup) continue;
+        store.entries[key].push({
+          id: eid, type: r.type, cat: r.cat, amount: r.amount,
+          memo: r.memo || '', day: dateStr(y, m, day),
+          by: r.by || store.me || store.name || '', at: Date.now(), fx: 1
+        });
+        added++;
+      }
+    }
+  });
+  return added > 0;
+}
+function buildFixed(){
+  var box = document.getElementById('fxBody');
+  if(!box) return;
+  var rules = fixedList();
+  box.innerHTML = '';
+  if(!rules.length){
+    box.innerHTML = '<button class="empty empty-tap" id="fxEmpty">' +
+      '<span class="e">🔁</span>' +
+      '<span class="t1">매달 똑같이 나가는 돈이 있나요?</span>' +
+      '<span class="t2">월세·통신비를 넣어두면 자동으로 기록돼요</span></button>';
+    var eb = document.getElementById('fxEmpty');
+    if(eb) eb.onclick = function(){ openFixed(null); };
+    return;
+  }
+  var tot = 0;
+  rules.slice().sort(function(a,b){ return (a.day||31) - (b.day||31); }).forEach(function(r){
+    if(r.type === 'expense') tot += r.amount;
+    var d = document.createElement('button');
+    d.className = 'fx-row';
+    d.type = 'button';
+    var sign = r.type === 'expense' ? '-' : '+';
+    var color = r.type === 'expense' ? 'c-out' : (r.type === 'saving' ? 'c-save' : 'c-in');
+    d.innerHTML =
+      '<span class="e">' + (EMOJI[r.cat] || '•') + '</span>' +
+      '<span class="nm"><b>' + escapeHtml(r.cat) + '</b><span>매달 ' +
+        (r.day ? r.day + '일' : '말일') + (r.memo ? ' · ' + escapeHtml(r.memo) : '') + '</span></span>' +
+      '<span class="am ' + color + '">' + sign + won(r.amount) + '</span>';
+    d.onclick = function(){ openFixed(r); };
+    box.appendChild(d);
+  });
+  if(tot > 0){
+    var f = document.createElement('div');
+    f.className = 'bud-etc';
+    f.style.paddingTop = '10px';
+    f.innerHTML = '<span>매달 고정 지출</span><span>' + won(tot) + '원</span>';
+    box.appendChild(f);
+  }
+}
+var openFixed = function(){};
+(function(){
+  var bg = document.getElementById('fxBg');
+  if(!bg) return;
+  var $ = function(id){ return document.getElementById(id); };
+  var tab = 'expense', cat = null, editing = null;
+
+  function drawCats(){
+    ensureCats();
+    var box = $('fxCats');
+    var arr = (tab === 'expense') ? store.cats.expense : store.cats.income;
+    if(!cat || !arr.some(function(c){ return c.n === cat; })) cat = arr[0] ? arr[0].n : null;
+    box.innerHTML = '';
+    arr.forEach(function(c){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pk' + (c.n === cat ? ' on' : '');
+      if(c.n === cat) b.style.background = 'var(--primary)';
+      b.innerHTML = '<span class="pke">' + c.e + '</span>' + escapeHtml(c.n);
+      b.onclick = function(){ cat = c.n; drawCats(); };
+      box.appendChild(b);
+    });
+    $('fxTabOut').className = 'tab out' + (tab === 'expense' ? ' on' : '');
+    $('fxTabIn').className = 'tab inc' + (tab === 'income' ? ' on' : '');
+  }
+  function drawDays(sel){
+    var d = $('fxDay');
+    d.innerHTML = '';
+    for(var i = 1; i <= 31; i++){
+      var o = document.createElement('option');
+      o.value = i; o.textContent = '매달 ' + i + '일';
+      d.appendChild(o);
+    }
+    var o2 = document.createElement('option');
+    o2.value = 0; o2.textContent = '매달 말일';
+    d.appendChild(o2);
+    d.value = (sel == null ? Math.min(25, (new Date()).getDate()) : sel);
+  }
+  openFixed = function(r){
+    editing = r || null;
+    tab = r ? (r.type === 'expense' ? 'expense' : 'income') : 'expense';
+    cat = r ? r.cat : null;
+    drawCats();
+    drawDays(r ? r.day : null);
+    $('fxAmt').value = r ? won(r.amount) : '';
+    $('fxMemo').value = r ? (r.memo || '') : '';
+    $('fxH3').textContent = r ? '🔁 매달 나가는 돈 수정' : '🔁 매달 나가는 돈';
+    $('fxDel').className = 'sbtn warn' + (r ? '' : ' hidden');
+    bg.classList.remove('hidden');
+  };
+  var close = function(){ editing = null; bg.classList.add('hidden'); };
+  $('fxCancel').onclick = close;
+  bg.onclick = function(e){ if(e.target === bg) close(); };
+  $('fxTabOut').onclick = function(){ tab = 'expense'; cat = null; drawCats(); };
+  $('fxTabIn').onclick = function(){ tab = 'income'; cat = null; drawCats(); };
+  $('fxAmt').addEventListener('input', function(){
+    var v = digitsOf(this.value);
+    this.value = v ? won(v) : '';
+  });
+  $('fxAdd').onclick = function(){ openFixed(null); };
+  $('fxDel').onclick = function(){
+    if(!editing) return;
+    store.fixed = fixedList().filter(function(x){ return x.id !== editing.id; });
+    close(); save(); render();
+    toast('매달 나가는 돈에서 뺐어요');
+  };
+  $('fxSave').onclick = function(){
+    var amt = digitsOf($('fxAmt').value);
+    if(amt <= 0){ $('fxAmt').focus(); toast('금액을 적어주세요'); return; }
+    if(!cat){ toast('카테고리를 골라주세요'); return; }
+    var type = (tab === 'income' && cat === SAVE_CAT) ? 'saving' : tab;
+    var day = parseInt($('fxDay').value, 10) || 0;
+    var memo = ($('fxMemo').value || '').trim();
+    if(editing){
+      editing.type = type; editing.cat = cat; editing.amount = amt;
+      editing.day = day; editing.memo = memo; editing.at = Date.now();
+    }else{
+      var now = new Date();
+      fixedList().push({
+        id: rid(8), type: type, cat: cat, amount: amt, day: day, memo: memo,
+        fm: mkey(now.getFullYear(), now.getMonth() + 1),
+        by: store.me || store.name || '', at: Date.now()
+      });
+    }
+    store.fixedAt = Date.now();
+    applyFixed();
+    close(); save(); render();
+    toast(editing ? '수정했어요' : '등록했어요 · 해당 날짜에 자동으로 기록돼요 🔁');
+  };
+})();
+
 /* ---------------- 카테고리 랭킹 ---------------- */
 function buildRank(){
   var box = document.getElementById('rank');
@@ -3927,7 +4191,7 @@ function render(){
     ? ('수입 ' + won(s.inc) + '원 − 지출 ' + won(s.out) + '원 − 적금 ' + won(s.save) + '원')
     : '수입을 입력하면 남은 금액이 자동 계산돼요';
 
-  buildMonths(); buildAlerts(); buildBudget(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); buildPlan(); syncAdd();
+  buildMonths(); buildAlerts(); buildBudget(); buildFixed(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); buildPlan(); syncAdd();
 }
 
 /* ---------------- 설정 ---------------- */
@@ -4053,6 +4317,7 @@ function localBook(){
            cats:store.cats, catsAt:store.catsAt||0,
            assets:store.assets, assetsAt:store.assetsAt||0,
            budget:store.budget||{}, budgetM:store.budgetM||{}, budgetAt:store.budgetAt||0,
+           fixed:store.fixed||[], fixedAt:store.fixedAt||0,
            entries:ent, plans:packPlans(store.plans),
            kinds:store.kinds||null, kindsAt:store.kindsAt||0,
            tomb:store.tomb||{}, updatedAt:Date.now() };
@@ -4110,7 +4375,10 @@ function mergeBook(a, b){
   var bNewerCats = (b.catsAt||0) > (a.catsAt||0) && b.cats && b.cats.expense && b.cats.income;
   var bNewerAssets = (b.assetsAt||0) > (a.assetsAt||0) && b.assets;
   var bNewerBud = (b.budgetAt||0) > (a.budgetAt||0);
+  var bNewerFx = (b.fixedAt||0) > (a.fixedAt||0);
   return {
+    fixed: bNewerFx ? (b.fixed||[]) : (a.fixed||b.fixed||[]),
+    fixedAt: Math.max(a.fixedAt||0, b.fixedAt||0),
     budget: bNewerBud ? (b.budget||{}) : (a.budget||b.budget||{}),
     budgetM: bNewerBud ? (b.budgetM||{}) : (a.budgetM||b.budgetM||{}),
     budgetAt: Math.max(a.budgetAt||0, b.budgetAt||0),
@@ -4140,6 +4408,7 @@ function applyBook(bk){
     store.cats = bk.cats; store.catsAt = bk.catsAt || 0; rebuildEmoji();
   }
   if(bk.assets){ store.assets = bk.assets; store.assetsAt = bk.assetsAt || 0; ensureAssets(); }
+  if(Array.isArray(bk.fixed)){ store.fixed = bk.fixed; store.fixedAt = bk.fixedAt || 0; }
   if(bk.budget || bk.budgetM){
     store.budget = bk.budget || {};
     store.budgetM = bk.budgetM || {};
