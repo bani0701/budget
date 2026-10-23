@@ -130,7 +130,9 @@
   .invite .t{font-size:11.5px;font-weight:800;color:var(--primary);letter-spacing:-.2px}
   .invite .n{font-size:18px;font-weight:800;color:var(--ink);margin-top:3px;letter-spacing:-.5px}
   .sheet-scroll{max-height:82vh;overflow-y:auto}
-  .vtabs{display:flex;gap:0;margin:11px -16px -10px;padding:0 10px;background:#fff}
+  .vtabs{display:flex;gap:0;margin:11px -16px -10px;padding:0 10px;background:#fff;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .vtabs::-webkit-scrollbar{display:none}
   .vbadge{
     display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
     min-width:17px;height:17px;padding:2px 4px 0;line-height:1;
@@ -139,13 +141,14 @@
     vertical-align:middle;position:relative;top:-1px;
   }
   .vtab{
-    flex:1;height:44px;border-radius:0;background:transparent;position:relative;
+    flex:1 0 auto;height:44px;padding:0 12px;border-radius:0;background:transparent;position:relative;
+    white-space:nowrap;
     font-size:15px;font-weight:700;color:#b7bbc4;letter-spacing:-.4px;
     display:flex;align-items:center;justify-content:center;transition:color .15s;
   }
   .vtab.on{color:var(--ink);font-weight:800}
   .vtab.on::after{
-    content:"";position:absolute;left:14%;right:14%;bottom:0;height:3px;
+    content:"";position:absolute;left:10%;right:10%;bottom:0;height:3px;
     border-radius:0;background:#111418;
   }
   .view{display:flex;flex-direction:column;gap:14px}
@@ -422,6 +425,50 @@
   .item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
   .item .nm{cursor:pointer}
   .item .nm:active b,.item .nm:active span{opacity:.55}
+  .budline{display:flex;align-items:center;gap:9px;width:100%;margin:0;background:var(--card);border:0;
+    border-radius:16px;padding:0 14px;height:48px;box-shadow:var(--shadow);font-family:inherit;
+    font-size:12.5px;font-weight:800;color:var(--ink);text-align:left;cursor:pointer;
+    -webkit-tap-highlight-color:transparent}
+  .budline:active{opacity:.6}
+  .budline .e{font-size:15px;flex:0 0 auto}
+  .budline .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .budline .tx i{font-style:normal;font-weight:700;color:var(--sub)}
+  .budline.over .tx b{color:var(--expense)}
+  .budline .ar{color:#c6ccd6;font-size:16px;font-weight:900;flex:0 0 auto;line-height:1}
+  .bud-sum{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .bud-sum .bl{font-size:12px;font-weight:700;color:var(--sub)}
+  .bud-sum .bb{font-size:19px;font-weight:900;letter-spacing:-.6px;margin-left:5px}
+  .bud-sum .bp{font-size:11.5px;font-weight:800;color:var(--sub);white-space:nowrap}
+  .bud-sum .bb.over,.bud-sum .bp.over{color:var(--expense)}
+  .bud-note{font-size:11.5px;font-weight:700;color:var(--sub);margin-top:5px;line-height:1.5}
+  .bud-note.over{color:var(--expense)}
+  .bud-list{margin-top:13px;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .bud-tile{min-width:0;background:var(--bg);border-radius:14px;padding:11px 12px 12px}
+  .bud-tile .t1{display:flex;justify-content:space-between;align-items:baseline;gap:5px;margin-bottom:4px}
+  .bud-tile .nm{font-size:12px;font-weight:800;color:var(--ink);min-width:0;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .bud-tile .pc{font-size:10.5px;font-weight:900;color:var(--sub);white-space:nowrap}
+  .bud-tile .t2{font-size:15px;font-weight:900;letter-spacing:-.4px;color:var(--ink)}
+  .bud-tile .t2 span{font-size:11px;font-weight:800;color:var(--sub);margin-left:2px}
+  .bud-tile.warn{background:#fff6e9}
+  .bud-tile.warn .pc{color:#d4860f}
+  .bud-tile.over{background:#fdeee9}
+  .bud-tile.over .pc,.bud-tile.over .t2{color:var(--expense)}
+  .bud-tile.over .t2 span{color:var(--expense);opacity:.8}
+  .bud-etc{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;
+    color:var(--sub);padding-top:2px}
+  .bud-more{grid-column:1 / -1;border:0;background:none;padding:3px 0 0;font-size:11.5px;font-weight:800;
+    color:var(--primary);cursor:pointer;font-family:inherit}
+  .bud-set{display:flex;flex-direction:column;gap:9px;max-height:42vh;overflow:auto;margin:6px 0 14px;
+    -webkit-overflow-scrolling:touch}
+  .bs-row{display:flex;align-items:center;gap:10px}
+  .bs-row .bn{flex:1;font-size:13.5px;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bs-row input{width:118px;text-align:right;border:0;background:var(--bg);border-radius:12px;padding:11px 12px;
+    font-size:14px;font-weight:900;font-family:inherit;color:var(--ink);-webkit-appearance:none}
+  .bs-row .wn{font-size:12px;font-weight:800;color:var(--sub)}
+  .bs-tot{display:flex;justify-content:space-between;align-items:center;background:var(--primary-soft);
+    border-radius:14px;padding:13px 15px;font-size:13.5px;font-weight:800;color:#2f6bd8}
+  .bs-tot b{font-size:18px;font-weight:900}
   .it-amt{font-size:26px;font-weight:900;letter-spacing:-.6px;margin:2px 0 12px}
   .it-memo{background:var(--bg);border-radius:14px;padding:14px 15px;margin-bottom:22px;font-size:13.5px;
     font-weight:600;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-all;
@@ -722,9 +769,10 @@
       <div class="months" id="months"></div>
       <div class="vtabs">
         <button class="vtab on" data-view="month">이번 달</button>
+        <button class="vtab" data-view="budget">예산</button>
         <button class="vtab" data-view="save">모은 돈</button>
-        <button class="vtab" data-view="stats">한눈에</button>
         <button class="vtab" data-view="plan">캘린더<span class="vbadge hidden" id="planBadge">0</span></button>
+        <button class="vtab" data-view="stats">한눈에</button>
       </div>
     </div>
 
@@ -751,11 +799,26 @@
       </div>
 
 
+      <button class="budline hidden" id="budLine" type="button"></button>
+
       <div class="ticker hidden" id="ticker">
         <div class="tk-track" id="tkTrack"></div>
         <button class="tk-x" id="tkClose" aria-label="알림 닫기" title="알림 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
       </div><!-- /탭1 앞부분 -->
+
+      <!-- ===== 탭 · 한 달 예산 ===== -->
+      <div class="view v-budget hidden">
+      <!-- 한 달 예산 -->
+      <div class="card">
+        <div class="card-h">
+          <div class="card-t" id="budTitle">10월 예산</div>
+          <button class="mini" id="budEdit">예산 설정</button>
+        </div>
+        <div id="budBody"></div>
+      </div>
+
+      </div><!-- /예산 탭 -->
 
       <!-- ===== 탭2 · 모은 돈 ===== -->
       <div class="view v-save hidden">
@@ -1094,6 +1157,22 @@
     </div>
   </div>
 
+  <!-- 한 달 예산 설정 -->
+  <div class="sheet-bg hidden" id="budBg">
+    <div class="sheet sheet-scroll">
+      <h3>💰 한 달 예산</h3>
+      <p id="budSub">카테고리마다 쓸 금액을 정하면 쓴 만큼 자동으로 차감돼요.</p>
+      <div class="p-kinds" id="budScope"></div>
+      <div class="bud-set" id="budSet"></div>
+      <div class="bs-tot"><span>총 예산</span><b id="budSum">0원</b></div>
+      <div class="srow" style="margin-top:16px">
+        <button class="sbtn" id="budClear">전부 비우기</button>
+        <button class="sbtn main" id="budSave">저장하기</button>
+      </div>
+      <div class="srow"><button class="sbtn" id="budCancel">닫기</button></div>
+    </div>
+  </div>
+
   <!-- 내역 자세히 -->
   <div class="sheet-bg hidden" id="itemBg">
     <div class="sheet">
@@ -1295,6 +1374,9 @@ function load(key){
       o.tomb = o.tomb || {}; o.nameAt = o.nameAt||0; o.goalAt = o.goalAt||0;
       o.share = o.share || {url:'',id:''}; o.base = o.base || ''; o.me = o.me || '';
       o.catsAt = o.catsAt || 0; o.assetsAt = o.assetsAt || 0;
+      if(!o.budget || typeof o.budget !== 'object') o.budget = {};
+      if(!o.budgetM || typeof o.budgetM !== 'object') o.budgetM = {};
+      o.budgetAt = o.budgetAt || 0;
       o.cid = o.cid || '';
       o.plans = (o.plans && typeof o.plans === 'object') ? o.plans : {};
       o.people = Array.isArray(o.people) ? o.people : [];
@@ -1945,13 +2027,20 @@ document.getElementById('hideTotalBtn').onclick = function(){
 /* 화면 탭 (이번 달 / 모은 돈 / 한눈에) */
 function setView(v){
   ui.view = v;
-  ['month','save','stats','plan'].forEach(function(k){
+  ['month','budget','save','stats','plan'].forEach(function(k){
     Array.prototype.forEach.call(document.querySelectorAll('.v-' + k), function(el){
       if(k === v) el.classList.remove('hidden'); else el.classList.add('hidden');
     });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.vtab'), function(b){
-    b.className = 'vtab' + (b.getAttribute('data-view') === v ? ' on' : '');
+    var on = (b.getAttribute('data-view') === v);
+    b.className = 'vtab' + (on ? ' on' : '');
+    if(on && b.parentNode && b.parentNode.scrollWidth > b.parentNode.clientWidth + 4){
+      var box = b.parentNode;
+      var want = b.offsetLeft - (box.clientWidth - b.offsetWidth) / 2;
+      try{ box.scrollTo({ left: Math.max(0, want), behavior:'smooth' }); }
+      catch(e){ box.scrollLeft = Math.max(0, want); }
+    }
   });
   if(v === 'save') animateSave();
 }
@@ -1964,7 +2053,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.vtab'), function(b){
 
 /* 좌우 스와이프로 탭 이동 */
 (function(){
-  var VIEWS = ['month','save','stats','plan'];
+  var VIEWS = ['month','budget','save','plan','stats'];
   var sx=0, sy=0, st=0, track=false;
   function scrollableX(node){
     while(node && node !== document.body){
@@ -2582,6 +2671,230 @@ function escapeHtml(s){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
+
+/* ---------------- 한 달 예산 ---------------- */
+function budBase(){
+  if(!store.budget || typeof store.budget !== 'object' || Array.isArray(store.budget)) store.budget = {};
+  return store.budget;
+}
+function budMonths(){
+  if(!store.budgetM || typeof store.budgetM !== 'object' || Array.isArray(store.budgetM)) store.budgetM = {};
+  return store.budgetM;
+}
+function budIsOv(y,m){
+  var o = budMonths()[mkey(y,m)];
+  return !!(o && typeof o === 'object');
+}
+function budFor(y,m){
+  var o = budMonths()[mkey(y,m)];
+  return (o && typeof o === 'object') ? o : budBase();
+}
+function budSum(b){
+  var t = 0;
+  Object.keys(b || {}).forEach(function(k){ t += (+b[k] || 0); });
+  return t;
+}
+function paintBudLine(txt, over){
+  var el = document.getElementById('budLine');
+  if(!el) return;
+  if(!txt){ el.classList.add('hidden'); return; }
+  el.className = 'budline' + (over ? ' over' : '');
+  el.innerHTML = '<span class="e">💰</span><span class="tx">' + txt + '</span><span class="ar">›</span>';
+  el.onclick = function(){ setView('budget'); window.scrollTo({ top:0, behavior:'smooth' }); };
+}
+function buildBudget(){
+  var box = document.getElementById('budBody');
+  if(!box) return;
+  var t = document.getElementById('budTitle');
+  if(t) t.textContent = ui.month + '월 예산' + (budIsOv(store.year, ui.month) ? ' (이 달만)' : '');
+  var bud = budFor(store.year, ui.month), tot = budSum(bud);
+  box.innerHTML = '';
+  if(tot <= 0) paintBudLine('');
+  if(tot <= 0){
+    box.innerHTML = '<button class="empty empty-tap" id="budEmpty">' +
+      '<span class="e">💰</span>' +
+      '<span class="t1">아직 예산을 정하지 않았어요</span>' +
+      '<span class="t2">여기를 눌러 카테고리별로 정해 보세요</span></button>';
+    var eb = document.getElementById('budEmpty');
+    if(eb) eb.onclick = openBudget;
+    return;
+  }
+  var spent = {};
+  byCat(store.year, ui.month, 'expense').forEach(function(c){ spent[c.cat] = c.amt; });
+  var used = 0;   /* 예산 밖 지출까지 포함해야 위 파란 카드와 숫자가 맞음 */
+  Object.keys(spent).forEach(function(k){ used += spent[k]; });
+  var left = tot - used;
+  var pct = Math.round(used / tot * 100);
+  var over = left < 0;
+
+  var now = new Date();
+  var isNow = (store.year === now.getFullYear() && ui.month === now.getMonth() + 1);
+  var dLeft = isNow ? (daysIn(store.year, ui.month) - now.getDate() + 1) : 0;
+
+  var note, per = 0;
+  if(left > 0 && dLeft > 0){
+    per = left / dLeft;
+    per = per >= 1000 ? Math.floor(per / 1000) * 1000 : Math.floor(per / 100) * 100;
+  }
+  if(over){
+    note = '예산보다 ' + won(-left) + '원 더 썼어요'
+         + (isNow && dLeft > 0 ? ' · ' + dLeft + '일 남음' : '');
+  }else if(isNow && dLeft > 0){
+    note = '남은 ' + dLeft + '일 · 하루 ' + won(per) + '원까지 괜찮아요';
+  }else{
+    note = '총 ' + won(tot) + '원 중 ' + won(used) + '원 사용';
+  }
+
+  paintBudLine(
+    ui.month + '월 예산 <b>' + won(Math.abs(left)) + '원 ' + (over ? '초과' : '남음') + '</b>' +
+    (isNow && dLeft > 0
+      ? (over ? ' <i>· ' + dLeft + '일 남음</i>'
+              : ' <i>· 하루 ' + won(per) + '원까지</i>')
+      : ''), over);
+
+  var head = document.createElement('div');
+  head.innerHTML =
+    '<div class="bud-sum"><div>' +
+      '<span class="bl">' + (over ? '예산 초과' : '남은 예산') + '</span>' +
+      '<b class="bb' + (over ? ' over' : '') + '">' + won(Math.abs(left)) + '원</b>' +
+    '</div><span class="bp' + (over ? ' over' : '') + '">' + pct + '% 사용</span></div>' +
+    '<div class="bud-note' + (over ? ' over' : '') + '">' + note + '</div>';
+  box.appendChild(head);
+
+  var rows = Object.keys(bud).filter(function(k){ return (+bud[k]||0) > 0; })
+    .map(function(k){ return { cat:k, bud:+bud[k], use:(spent[k] || 0) }; })
+    .sort(function(a,b){ return (b.use / b.bud) - (a.use / a.bud); });
+
+  var wrap = document.createElement('div');
+  wrap.className = 'bud-list';
+  var CUT = 6, open = !!ui.budOpen;
+  (open ? rows : rows.slice(0, CUT)).forEach(function(r){
+    var p = Math.round(r.use / r.bud * 100);
+    var ov = r.use > r.bud, wn = !ov && p >= 80;
+    var d = document.createElement('div');
+    d.className = 'bud-tile' + (ov ? ' over' : (wn ? ' warn' : ''));
+    d.innerHTML =
+      '<div class="t1"><span class="nm">' + (EMOJI[r.cat] || '•') + ' ' + escapeHtml(r.cat) + '</span>' +
+        '<span class="pc">' + p + '%</span></div>' +
+      '<div class="t2">' + won(ov ? r.use - r.bud : r.bud - r.use) + '원' +
+        '<span>' + (ov ? '초과' : '남음') + '</span></div>';
+    wrap.appendChild(d);
+  });
+  if(rows.length > CUT){
+    var mb = document.createElement('button');
+    mb.className = 'bud-more';
+    mb.textContent = open ? '접기 ▴' : ('카테고리 ' + (rows.length - CUT) + '개 더보기 ▾');
+    mb.onclick = function(){ ui.budOpen = !open; buildBudget(); };
+    wrap.appendChild(mb);
+  }
+  var etc = 0;
+  Object.keys(spent).forEach(function(k){ if(!(+bud[k] > 0)) etc += spent[k]; });
+  if(etc > 0){
+    var d2 = document.createElement('div');
+    d2.className = 'bud-etc';
+    d2.innerHTML = '<span>예산 밖 지출</span><span>' + won(etc) + '원</span>';
+    wrap.appendChild(d2);
+  }
+  box.appendChild(wrap);
+}
+/* 금액을 만원 단위로 짧게 */
+function man(n){
+  n = Math.round(n || 0);
+  if(n >= 10000) return won(Math.round(n / 10000)) + '만';
+  if(n <= 0) return '0원';
+  return won(n) + '원';
+}
+var openBudget = function(){};
+(function(){
+  var bg = document.getElementById('budBg');
+  if(!bg) return;
+  var $ = function(id){ return document.getElementById(id); };
+  var ovMode = false;
+
+  function drawScope(){
+    var box = $('budScope');
+    box.innerHTML = '';
+    [{v:false,t:'매달 기본'},{v:true,t:ui.month + '월만'}].forEach(function(o){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pk' + (o.v === ovMode ? ' on' : '');
+      if(o.v === ovMode) b.style.background = 'var(--primary)';
+      b.textContent = o.t;
+      b.onclick = function(){ ovMode = o.v; drawScope(); drawRows(curVals()); };
+      box.appendChild(b);
+    });
+    $('budSub').textContent = ovMode
+      ? (ui.month + '월에만 적용돼요. 다른 달은 기본 예산을 써요.')
+      : '모든 달에 기본으로 적용돼요.';
+  }
+  function curVals(){
+    var src = ovMode ? (budMonths()[mkey(store.year, ui.month)] || budBase()) : budBase();
+    var o = {};
+    Object.keys(src || {}).forEach(function(k){ o[k] = +src[k] || 0; });
+    return o;
+  }
+  function paintSum(){
+    var t = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('#budSet input'), function(i){
+      t += digitsOf(i.value);
+    });
+    $('budSum').textContent = won(t) + '원';
+  }
+  function drawRows(vals){
+    ensureCats();
+    var box = $('budSet');
+    box.innerHTML = '';
+    store.cats.expense.forEach(function(c){
+      var r = document.createElement('div');
+      r.className = 'bs-row';
+      r.innerHTML = '<span class="bn">' + c.e + ' ' + escapeHtml(c.n) + '</span>' +
+        '<input inputmode="numeric" placeholder="0" data-cat="' + escapeHtml(c.n) + '">' +
+        '<span class="wn">원</span>';
+      var i = r.querySelector('input');
+      if(vals[c.n] > 0) i.value = won(vals[c.n]);
+      i.oninput = function(){
+        var v = digitsOf(this.value);
+        this.value = v ? won(v) : '';
+        paintSum();
+      };
+      box.appendChild(r);
+    });
+    paintSum();
+  }
+  openBudget = function(){
+    ovMode = budIsOv(store.year, ui.month);
+    drawScope();
+    drawRows(curVals());
+    bg.classList.remove('hidden');
+  };
+  var close = function(){ bg.classList.add('hidden'); };
+  $('budCancel').onclick = close;
+  bg.onclick = function(e){ if(e.target === bg) close(); };
+  $('budClear').onclick = function(){
+    Array.prototype.forEach.call(document.querySelectorAll('#budSet input'), function(i){ i.value = ''; });
+    paintSum();
+  };
+  $('budSave').onclick = function(){
+    var o = {};
+    Array.prototype.forEach.call(document.querySelectorAll('#budSet input'), function(i){
+      var v = digitsOf(i.value);
+      if(v > 0) o[i.getAttribute('data-cat')] = v;
+    });
+    var k = mkey(store.year, ui.month);
+    if(ovMode){
+      if(Object.keys(o).length) budMonths()[k] = o;
+      else delete budMonths()[k];
+    }else{
+      store.budget = o;
+      delete budMonths()[k];
+    }
+    store.budgetAt = Date.now();
+    close(); save(); render();
+    toast(Object.keys(o).length ? '예산을 저장했어요 💰' : '예산을 비웠어요');
+  };
+  var be = $('budEdit');
+  if(be) be.onclick = openBudget;
+})();
 
 /* ---------------- 카테고리 랭킹 ---------------- */
 function buildRank(){
@@ -3601,15 +3914,20 @@ function render(){
   document.getElementById('tOut').textContent = won(s.out);
   document.getElementById('tSave').textContent = won(s.save);
 
-  var used = s.out + s.save;
-  var pct = s.inc > 0 ? Math.min(100, Math.round(used/s.inc*100)) : 0;
-  document.getElementById('heroBar').style.width = pct + '%';
-  document.getElementById('barL').textContent = '사용 ' + (s.inc>0?pct:0) + '%';
+  var bTot = budSum(budFor(store.year, ui.month));
+  var base = bTot > 0 ? bTot : s.inc;
+  var used = bTot > 0 ? s.out : (s.out + s.save);
+  var pct = base > 0 ? Math.round(used/base*100) : 0;
+  document.getElementById('heroBar').style.width = Math.min(100, pct) + '%';
+  document.getElementById('barL').textContent = (bTot > 0 && used > bTot)
+    ? ('예산 ' + won(used - bTot) + '원 초과')
+    : ('사용 ' + (base>0?pct:0) + '%');
+  document.getElementById('barR').textContent = bTot > 0 ? '예산 소진율' : '수입 대비';
   document.getElementById('heroNote').textContent = s.inc>0
     ? ('수입 ' + won(s.inc) + '원 − 지출 ' + won(s.out) + '원 − 적금 ' + won(s.save) + '원')
     : '수입을 입력하면 남은 금액이 자동 계산돼요';
 
-  buildMonths(); buildAlerts(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); buildPlan(); syncAdd();
+  buildMonths(); buildAlerts(); buildBudget(); buildSave(); buildList(); buildCal(); buildRank(); buildYear(); buildPlan(); syncAdd();
 }
 
 /* ---------------- 설정 ---------------- */
@@ -3734,6 +4052,7 @@ function localBook(){
            goal:store.goal||0, goalAt:store.goalAt||0,
            cats:store.cats, catsAt:store.catsAt||0,
            assets:store.assets, assetsAt:store.assetsAt||0,
+           budget:store.budget||{}, budgetM:store.budgetM||{}, budgetAt:store.budgetAt||0,
            entries:ent, plans:packPlans(store.plans),
            kinds:store.kinds||null, kindsAt:store.kindsAt||0,
            tomb:store.tomb||{}, updatedAt:Date.now() };
@@ -3790,7 +4109,11 @@ function mergeBook(a, b){
   var bNewerGoal = (b.goalAt||0) > (a.goalAt||0);
   var bNewerCats = (b.catsAt||0) > (a.catsAt||0) && b.cats && b.cats.expense && b.cats.income;
   var bNewerAssets = (b.assetsAt||0) > (a.assetsAt||0) && b.assets;
+  var bNewerBud = (b.budgetAt||0) > (a.budgetAt||0);
   return {
+    budget: bNewerBud ? (b.budget||{}) : (a.budget||b.budget||{}),
+    budgetM: bNewerBud ? (b.budgetM||{}) : (a.budgetM||b.budgetM||{}),
+    budgetAt: Math.max(a.budgetAt||0, b.budgetAt||0),
     assets: bNewerAssets ? b.assets : a.assets,
     assetsAt: Math.max(a.assetsAt||0, b.assetsAt||0),
     cats: bNewerCats ? b.cats : a.cats,
@@ -3817,6 +4140,11 @@ function applyBook(bk){
     store.cats = bk.cats; store.catsAt = bk.catsAt || 0; rebuildEmoji();
   }
   if(bk.assets){ store.assets = bk.assets; store.assetsAt = bk.assetsAt || 0; ensureAssets(); }
+  if(bk.budget || bk.budgetM){
+    store.budget = bk.budget || {};
+    store.budgetM = bk.budgetM || {};
+    store.budgetAt = bk.budgetAt || 0;
+  }
   var ent = {};
   Object.keys(bk.entries||{}).forEach(function(k){
     ent[k] = Object.keys(bk.entries[k]).map(function(id){
