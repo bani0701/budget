@@ -517,6 +517,18 @@
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px;
   }
   .cal .cell.empty{background:transparent}
+  .cal .cell:not(.empty){cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .cal .cell:not(.empty):active{opacity:.55}
+  .day-list{display:flex;flex-direction:column;max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch}
+  .dl-row{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .dl-row:last-child{border-bottom:0}
+  .dl-row .e{font-size:17px;flex:0 0 auto;line-height:1.25}
+  .dl-row .nm{flex:1;min-width:0}
+  .dl-row .nm b{display:block;font-size:13.5px;font-weight:800;line-height:1.3}
+  .dl-row .nm span{display:block;font-size:11.5px;font-weight:600;color:var(--sub);margin-top:3px;
+    line-height:1.5;word-break:break-all;white-space:pre-wrap}
+  .dl-row .am{font-size:14px;font-weight:900;white-space:nowrap;padding-top:1px}
+  .day-empty{padding:18px 0;text-align:center;font-size:13px;font-weight:700;color:var(--sub)}
   .cal .cell .dd{font-size:10.5px;font-weight:700;color:var(--sub);line-height:1}
   .cal .cell .vv{font-size:8px;font-weight:800;color:var(--expense);line-height:1.15;letter-spacing:-.3px}
   .cal .cell .vi{font-size:8px;font-weight:800;color:var(--income);line-height:1.15;letter-spacing:-.3px}
@@ -1232,6 +1244,16 @@
         <button class="sbtn main" id="budSave">저장하기</button>
       </div>
       <div class="srow"><button class="sbtn" id="budCancel">닫기</button></div>
+    </div>
+  </div>
+
+  <!-- 하루 내역 -->
+  <div class="sheet-bg hidden" id="dayBg">
+    <div class="sheet sheet-scroll">
+      <h3 id="dayTitle">10월 1일</h3>
+      <p id="daySub"></p>
+      <div class="day-list" id="dayList"></div>
+      <div class="srow" style="margin-top:16px"><button class="sbtn main" id="dayClose">닫기</button></div>
     </div>
   </div>
 
@@ -2763,6 +2785,62 @@ function escapeHtml(s){
   });
 }
 
+/* ---------------- 하루 내역 보기 ---------------- */
+function openDay(d){
+  var bg = document.getElementById('dayBg');
+  if(!bg) return;
+  var y = store.year, m = ui.month;
+  var WD = ['일','월','화','수','목','금','토'];
+  var arr = list(y, m).filter(function(e){ return entryDay(e) === d; })
+    .sort(function(a, b){ return (a.at || 0) - (b.at || 0); });
+
+  document.getElementById('dayTitle').textContent =
+    m + '월 ' + d + '일 (' + WD[new Date(y, m-1, d).getDay()] + ')';
+
+  var out = 0, inc = 0, sv = 0;
+  arr.forEach(function(e){
+    if(e.type === 'expense') out += e.amount;
+    else if(e.type === 'saving') sv += e.amount;
+    else inc += e.amount;
+  });
+  var bits = [];
+  if(out) bits.push('지출 ' + won(out) + '원');
+  if(inc) bits.push('입금 ' + won(inc) + '원');
+  if(sv) bits.push('적금 ' + won(sv) + '원');
+  document.getElementById('daySub').textContent =
+    arr.length ? (bits.join(' · ') + ' · 총 ' + arr.length + '건') : '이 날은 기록이 없어요.';
+
+  var box = document.getElementById('dayList');
+  box.innerHTML = '';
+  if(!arr.length){
+    box.innerHTML = '<div class="day-empty">🗂️ 기록된 내역이 없어요</div>';
+  }else{
+    arr.forEach(function(e){
+      var sign = e.type === 'expense' ? '-' : '+';
+      var color = e.type === 'expense' ? 'c-out' : (e.type === 'saving' ? 'c-save' : 'c-in');
+      var sub = [];
+      if(e.memo) sub.push(escapeHtml(e.memo));
+      if(sync.on && e.by) sub.push('👤 ' + escapeHtml(e.by));
+      var r = document.createElement('div');
+      r.className = 'dl-row';
+      r.innerHTML =
+        '<span class="e">' + (EMOJI[e.cat] || '•') + '</span>' +
+        '<span class="nm"><b>' + escapeHtml(e.cat) + '</b>' +
+          (sub.length ? '<span>' + sub.join(' · ') + '</span>' : '') + '</span>' +
+        '<span class="am ' + color + '">' + sign + won(e.amount) + '원</span>';
+      box.appendChild(r);
+    });
+  }
+  bg.classList.remove('hidden');
+}
+(function(){
+  var bg = document.getElementById('dayBg');
+  if(!bg) return;
+  var close = function(){ bg.classList.add('hidden'); };
+  document.getElementById('dayClose').onclick = close;
+  bg.onclick = function(e){ if(e.target === bg) close(); };
+})();
+
 /* ---------------- 한 달 예산 ---------------- */
 function budBase(){
   if(!store.budget || typeof store.budget !== 'object' || Array.isArray(store.budget)) store.budget = {};
@@ -3022,7 +3100,7 @@ function applyFixed(){
         if(dup) continue;
         store.entries[key].push({
           id: eid, type: r.type, cat: r.cat, amount: r.amount,
-          memo: r.memo || '', day: dateStr(y, m, day),
+          memo: r.memo || '', day: day,
           by: r.by || store.me || store.name || '', at: Date.now(), fx: 1
         });
         added++;
@@ -3229,6 +3307,7 @@ function buildCal(){
     c.innerHTML = '<span class="dd">' + d + '</span>'
                 + (iv ? '<span class="vi">+' + wonS(iv) + '</span>' : '')
                 + (v ? '<span class="vv">-' + wonS(v) + '</span>' : '');
+    c.onclick = (function(day){ return function(){ openDay(day); }; })(d);
     box.appendChild(c);
   }
 
