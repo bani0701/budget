@@ -487,11 +487,22 @@
   .bs-tot{display:flex;justify-content:space-between;align-items:center;background:var(--primary-soft);
     border-radius:14px;padding:13px 15px;font-size:13.5px;font-weight:800;color:#2f6bd8}
   .bs-tot b{font-size:18px;font-weight:900}
-  .it-amt{font-size:26px;font-weight:900;letter-spacing:-.6px;margin:2px 0 12px}
-  .it-memo{background:var(--bg);border-radius:14px;padding:14px 15px;margin-bottom:22px;font-size:13.5px;
-    font-weight:600;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-all;
-    min-height:20px;max-height:36vh;overflow:auto}
-  .it-memo.none{color:var(--sub);font-weight:700}
+  .it-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .it-head .it-ht{min-width:0}
+  .it-head p{margin-bottom:0}
+  .it-x{width:30px;height:30px;flex:0 0 auto;padding:0;border:0;border-radius:999px;background:#f1f4f9;
+    color:var(--sub);font-size:12px;font-weight:900;font-family:inherit;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+  .it-x:active{background:#e4e8ef}
+  .it-amtin{display:flex;align-items:baseline;gap:3px;margin:12px 0 10px}
+  .it-amtin .sg{font-size:26px;font-weight:900;letter-spacing:-.6px}
+  .it-amtin input{flex:0 1 auto;min-width:1.2ch;width:5ch;border:0;background:transparent;padding:0;margin:0;
+    font-family:inherit;font-size:26px;font-weight:900;letter-spacing:-.6px;color:inherit;
+    -webkit-appearance:none;outline:none}
+  .it-amtin .w{font-size:17px;font-weight:900;flex:0 0 auto}
+  .it-memo{display:block;width:100%;box-sizing:border-box;border:0;resize:none;outline:none;
+    background:var(--bg);border-radius:14px;padding:12px 14px;margin-bottom:0;font-size:13.5px;
+    font-family:inherit;font-weight:600;line-height:1.55;color:var(--ink);min-height:42px;max-height:26vh}
   .item:last-child{border-bottom:none}
   .item .ic2{width:38px;height:38px;border-radius:12px;background:#f1f4f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto}
   .item .nm{flex:1;min-width:0}
@@ -1260,14 +1271,28 @@
   <!-- 내역 자세히 -->
   <div class="sheet-bg hidden" id="itemBg">
     <div class="sheet">
-      <h3 id="itTitle">내역</h3>
-      <p id="itSub"></p>
-      <div class="it-amt" id="itAmt">0원</div>
-      <span class="p-lab2" style="margin-top:4px">메모</span>
-      <div class="it-memo" id="itMemo"></div>
-      <div class="srow abtns">
-        <button class="sbtn warn" id="itDel">🗑️ 삭제하기</button>
-        <button class="sbtn main" id="itClose">닫기</button>
+      <div class="it-head">
+        <div class="it-ht"><h3 id="itTitle">내역</h3><p id="itSub"></p></div>
+        <button class="it-x" id="itClose" type="button" aria-label="닫기">✕</button>
+      </div>
+
+      <div class="it-amtin" id="itAmtBox">
+        <span class="sg" id="itSign">-</span>
+        <input id="itAmt" inputmode="numeric" placeholder="0">
+        <span class="w">원</span>
+      </div>
+
+      <div class="p-form" style="margin-top:2px">
+        <span class="p-tag2">날짜</span>
+        <input class="p-date" id="itDate" type="date">
+      </div>
+
+      <span class="p-lab2">메모</span>
+      <textarea class="it-memo" id="itMemo" rows="1" maxlength="60" placeholder="메모를 적어보세요"></textarea>
+
+      <div class="srow" style="margin:14px 0 0">
+        <button class="sbtn warn" id="itDel">🗑️ 삭제</button>
+        <button class="sbtn main" id="itSave">저장하기</button>
       </div>
     </div>
   </div>
@@ -2741,6 +2766,24 @@ function buildList(){
   }
 }
 /* 내역 하나를 아래 팝업으로 자세히 보기 */
+var _amtRuler = null;
+function fitAmtIn(){
+  var i = document.getElementById('itAmt');
+  if(!i) return;
+  if(!_amtRuler){
+    _amtRuler = document.createElement('span');
+    _amtRuler.style.cssText = 'position:absolute;left:-9999px;top:0;white-space:pre;visibility:hidden';
+    document.body.appendChild(_amtRuler);
+  }
+  var cs = getComputedStyle(i);
+  _amtRuler.style.font = cs.font;
+  _amtRuler.style.fontFamily = cs.fontFamily;
+  _amtRuler.style.fontSize = cs.fontSize;
+  _amtRuler.style.fontWeight = cs.fontWeight;
+  _amtRuler.style.letterSpacing = cs.letterSpacing;
+  _amtRuler.textContent = i.value || '0';
+  i.style.width = Math.max(14, _amtRuler.offsetWidth + 2) + 'px';
+}
 function openItem(e){
   var bg = document.getElementById('itemBg');
   if(!bg) return;
@@ -2753,14 +2796,17 @@ function openItem(e){
   if(dnum) bits.push(ui.month + '월 ' + dnum + '일');
   bits.push(tag);
   if(e.by) bits.push('👤 ' + e.by);
+  bits = [tag];
+  if(e.by) bits.push('👤 ' + e.by);
   document.getElementById('itTitle').textContent = (EMOJI[e.cat] || '•') + ' ' + e.cat;
   document.getElementById('itSub').textContent = bits.join(' · ');
-  var amt = document.getElementById('itAmt');
-  amt.className = 'it-amt ' + color;
-  amt.textContent = sign + won(e.amount) + '원';
-  var memo = document.getElementById('itMemo');
-  if(e.memo){ memo.className = 'it-memo'; memo.textContent = e.memo; }
-  else { memo.className = 'it-memo none'; memo.textContent = '메모가 없어요'; }
+  document.getElementById('itAmtBox').className = 'it-amtin ' + color;
+  document.getElementById('itSign').textContent = sign;
+  var ai = document.getElementById('itAmt');
+  ai.value = won(e.amount);
+  fitAmtIn();
+  document.getElementById('itDate').value = dateStr(store.year, ui.month, dnum || 1);
+  document.getElementById('itMemo').value = e.memo || '';
   bg.classList.remove('hidden');
 }
 (function(){
@@ -2769,6 +2815,39 @@ function openItem(e){
   var close = function(){ ui.itemView = null; bg.classList.add('hidden'); };
   document.getElementById('itClose').onclick = close;
   bg.onclick = function(ev){ if(ev.target === bg) close(); };
+  document.getElementById('itAmt').addEventListener('input', function(){
+    var v = digitsOf(this.value);
+    this.value = v ? won(v) : '';
+    fitAmtIn();
+  });
+  document.getElementById('itSave').onclick = function(){
+    var e = ui.itemView;
+    if(!e) return;
+    var amt = digitsOf(document.getElementById('itAmt').value);
+    if(amt <= 0){ toast('금액을 적어주세요'); return; }
+    var dv = (document.getElementById('itDate').value || '').split('-');
+    var ny = parseInt(dv[0], 10), nm = parseInt(dv[1], 10), nd = parseInt(dv[2], 10);
+    if(!ny || !nm || !nd){ toast('날짜를 골라주세요'); return; }
+    if(ny !== store.year){
+      toast(store.year + '년 가계부라 ' + ny + '년 날짜는 넣을 수 없어요');
+      return;
+    }
+    var memo = (document.getElementById('itMemo').value || '').trim();
+    var oldKey = null;
+    Object.keys(store.entries || {}).forEach(function(k){
+      (store.entries[k] || []).forEach(function(x){ if(x.id === e.id) oldKey = k; });
+    });
+    e.amount = amt; e.day = nd; e.memo = memo; e.at = Date.now();
+    var newKey = mkey(store.year, nm);
+    if(oldKey && oldKey !== newKey){
+      store.entries[oldKey] = store.entries[oldKey].filter(function(x){ return x.id !== e.id; });
+      if(!Array.isArray(store.entries[newKey])) store.entries[newKey] = [];
+      store.entries[newKey].push(e);
+      ui.month = nm;
+    }
+    close(); save(); render(); syncDateIn();
+    toast('수정했어요 ✏️');
+  };
   document.getElementById('itDel').onclick = function(){
     var e = ui.itemView;
     if(!e) return;
