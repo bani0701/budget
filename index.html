@@ -1466,7 +1466,9 @@ function setKey(k){
 }
 var store = { name:'', year:(new Date()).getFullYear(), goal:0, entries:{}, plans:{}, people:[], emos:[], kinds:null, kindsAt:0,
               tomb:{}, nameAt:0, goalAt:0, share:{url:'',id:''}, base:'', me:'', cid:'' };
-var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, actPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null };
+var ui = { month:(new Date()).getMonth()+1, tab:'expense', cat:null, listAsc:false, listLimit:10, listType:'all', planDay:(new Date()).getDate(), planKind:'일정', planEdit:null, planTimed:false, alarmPlan:null, actPlan:null, kindEdit:false, newKindEmo:'📌', gateYear:(new Date()).getFullYear(), invite:null, planY:null };
+/* 캘린더 탭이 보고 있는 연도 (가계부 연도와 따로 움직임) */
+function planY(){ return ui.planY || store.year; }
 
 /* ---------------- 저장 ---------------- */
 function saveLocal(){
@@ -1622,7 +1624,7 @@ function buildMonths(){
       var b = document.createElement('button');
       b.className = 'm-chip' + (m===ui.month?' on':'');
       b.innerHTML = '<span>'+m+'월</span>';
-      b.onclick = function(){ ui.month = m; ui.listLimit = LIST_STEP; render(); syncDateIn(); window.scrollTo({top:0,behavior:'smooth'}); };
+      b.onclick = function(){ ui.month = m; ui.planY = store.year; ui.listLimit = LIST_STEP; render(); syncDateIn(); window.scrollTo({top:0,behavior:'smooth'}); };
       box.appendChild(b);
     })(m);
   }
@@ -3536,7 +3538,8 @@ function togglePlanDone(p){
 function allPlans(){
   normPlans();
   var out = [];
-  var from = store.year + '-01-01', to = store.year + '-12-31';
+  var ty = (new Date()).getFullYear(), py = planY();
+  var from = Math.min(py, ty, store.year) + '-01-01', to = Math.max(py, ty, store.year) + '-12-31';
   Object.keys(store.plans).forEach(function(k){
     (store.plans[k] || []).forEach(function(p){
       if(!p || !p.sd) return;
@@ -3763,14 +3766,14 @@ function setTimeMode(on, keep){
     var el = document.getElementById(id);
     if(!el) return;
     var v = splitDT(el.value);
-    var d = v.d || dateStr(store.year, ui.month, ui.planDay);
+    var d = v.d || dateStr(planY(), ui.month, ui.planDay);
     var t = (keep && keep[i]) || v.t || (i === 0 ? '09:00' : '10:00');
     el.type = on ? 'datetime-local' : 'date';
     el.value = on ? (d + 'T' + t) : d;
   });
 }
 function syncPlanForm(){
-  var iso = dateStr(store.year, ui.month, ui.planDay);
+  var iso = dateStr(planY(), ui.month, ui.planDay);
   setTimeMode(false);
   var sd = document.getElementById('planSdt'), ed = document.getElementById('planEdt');
   if(sd) sd.value = iso;
@@ -3782,7 +3785,8 @@ function syncPlanForm(){
 function buildPlanCal(){
   var box = document.getElementById('pcal');
   if(!box) return;
-  var y = store.year, m = ui.month;
+  if(ui.planY && (ui.planY < store.year - 1 || ui.planY > store.year + 3)) ui.planY = null;
+  var y = planY(), m = ui.month;
   var last = daysIn(y, m);
   var first = new Date(y, m-1, 1).getDay();
   var weeks = Math.ceil((first + last) / 7);
@@ -3808,10 +3812,11 @@ function buildPlanCal(){
     return (a.p.at || 0) - (b.p.at || 0);
   });
 
-  document.getElementById('planTitle').textContent = m + '월';
+  document.getElementById('planTitle').textContent =
+    (y !== store.year ? y + '년 ' : '') + m + '월';
   var pv = document.getElementById('planPrev'), nx = document.getElementById('planNext');
-  if(pv) pv.disabled = (m <= 1);
-  if(nx) nx.disabled = (m >= 12);
+  if(pv) pv.disabled = (y <= store.year - 1 && m <= 1);
+  if(nx) nx.disabled = (y >= store.year + 3 && m >= 12);
 
   box.innerHTML = '';
   var WD = ['일','월','화','수','목','금','토'];
@@ -3906,7 +3911,7 @@ function planICS(p){
   L.push('BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//우리집 가계부//KO','CALSCALE:GREGORIAN');
   L.push('BEGIN:VEVENT');
   L.push('UID:' + p.id + '@budget');
-  L.push('DTSTAMP:' + icsTime(dateStr(store.year, ui.month, ui.planDay), '00:00') + 'Z');
+  L.push('DTSTAMP:' + icsTime(dateStr(planY(), ui.month, ui.planDay), '00:00') + 'Z');
   if(timed){
     L.push('DTSTART:' + icsTime(p.sd, p.st));
     L.push('DTEND:' + icsTime(p.ed || p.sd, p.et || p.st));
@@ -4022,9 +4027,10 @@ function bindPlanBtns(el, p){
 function buildPlanList(){
   var box = document.getElementById('planList');
   if(!box) return;
-  var y = store.year, m = ui.month, d = ui.planDay;
+  var y = planY(), m = ui.month, d = ui.planDay;
   var iso = dateStr(y, m, d);
-  document.getElementById('planDayTitle').textContent = m + '월 ' + d + '일 일정';
+  document.getElementById('planDayTitle').textContent =
+    (y !== store.year ? y + '년 ' : '') + m + '월 ' + d + '일 일정';
   var cntEl = document.getElementById('planDayCnt');
   var arr = plansOnISO(iso);
   if(cntEl) cntEl.textContent = arr.length + '개';
@@ -4131,11 +4137,13 @@ var openPlanSheet = function(){};
 
   /* 달력 월 이동 (화살표 · 스와이프) */
   function goPlanMonth(d){
-    var m = ui.month + d;
-    if(m < 1 || m > 12) return;
-    ui.month = m;
+    var y = planY(), m = ui.month + d;
+    if(m > 12){ m = 1; y++; }
+    if(m < 1){ m = 12; y--; }
+    if(y < store.year - 1 || y > store.year + 3) return;   /* 너무 멀리는 안 감 */
+    ui.planY = y; ui.month = m;
     var now = new Date();
-    ui.planDay = (store.year === now.getFullYear() && m === now.getMonth()+1) ? now.getDate() : 1;
+    ui.planDay = (y === now.getFullYear() && m === now.getMonth()+1) ? now.getDate() : 1;
     ui.listLimit = LIST_STEP;
     render(); syncDateIn();
     var pc = $('pcal');
@@ -4215,7 +4223,7 @@ var openPlanSheet = function(){};
     var txt = ($('planText').value || '').trim();
     if(!txt){ $('planText').focus(); toast('일정 내용을 적어주세요 ✏️'); return; }
     var a = splitDT($('planSdt').value), b = splitDT($('planEdt').value);
-    var sd = a.d || dateStr(store.year, ui.month, ui.planDay);
+    var sd = a.d || dateStr(planY(), ui.month, ui.planDay);
     var ed = b.d || sd;
     var st = ui.planTimed ? (a.t || '') : '';
     var et = ui.planTimed ? (b.t || '') : '';
